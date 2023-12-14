@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body,
+        p {
+            margin: 0;
+            font-family: sans-serif;
+        }
+        .logo-img{
+            width : 80px;
+        }
+
+        .main {
+            width: 100%;
+            height: 995px; /* 900px; */
+            background-color: #ebe8e8;
+            position: relative;
+            padding: 0px 0px;
+        }
+
+        .structure {
+            position: relative;
+            max-width: 1000px;
+            width: 100%;
+            height: 100%;
+            margin: auto;
+            border-radius: 25px;
+        }
+
+        .full-centered{
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center;
+            text-align: center !important;
+        }
+        .full-left {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: left;
+            text-align: left !important;
+        }
+        .full-right {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: right;
+            text-align: right !important;
+        }
+        .full-width{
+            width: 100%;
+        }
+        .header{
+            height: 60px;
+            width: 100%;
+            display: flex;
+            padding: 5px 2px;
+            flex-wrap: wrap;
+        }
+        .pa-r-10{
+            padding-right: 10px;
+        }
+        .pa-b-10{
+            padding-bottom: 10px;
+        }
+        .fs-17{
+            font-size: 17px;
+        }
+        .thanks-banner {
+            text-align: center;
+            font-size: larger;
+            background-color: #fdfbfb;
+            border: 1px solid #d6d6d6;
+            max-height: 100%;
+            height: 150px;
+            padding: 0 30px;
+	        color: #252525;
+        }
+        .thanks-label{
+            padding: 30px 0px 2px 0px;
+            font-size: 50px;
+        }
+        .thanks-label2{
+            font-size: 25px;
+            color: #949494;
+        }
+        .content-product {
+            text-align: center;
+            font-size: larger;
+            background-color: #fdfbfb;
+            border: 1px solid #d6d6d6;
+            max-height: 100%;
+            height: 200px;
+            padding: 0 30px;
+	        color: #252525;
+        }
+        .element-label{
+            padding-top: 10px;
+            font-size:30px;
+        }
+        .card-product{
+            margin-top: 15px;
+            -webkit-box-shadow: -4px 12px 23px -1px rgb(0 0 0 / 65%);
+            -moz-box-shadow: -4px 12px 23px -1px rgba(0,0,0,0.65);
+            box-shadow: 0px 4px 14px -5px rgb(0 0 0 / 65%);
+            height: 100px;
+        }
+        .payment-description{
+            padding-top:20px;
+        }
+        
+        .content-list-prices {
+            text-align: center;
+            font-size: larger;
+            background-color: #fdfbfb;
+            border: 1px solid #d6d6d6;
+            max-height: 100%;
+            height: 440px;
+            padding: 0 30px;
+	        color: #252525;
+        }
+        
+        .border-list{
+            padding-bottom: 70px;
+            border-bottom: 1px solid #afafaf;
+            margin-bottom: 40px;
+        }
+        
+        .total-row {
+            display: flex !important;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 1px solid #afafaf;
+        }
+        .footer{
+            text-align: center;
+            font-size: larger;
+            background-color: #fdfbfb;
+            border: 1px solid #d6d6d6;
+            max-height: 100%;
+            height: 50px;
+            padding: 10px 30px;
+	        color: #252525;
+        }
+        @media screen and (max-width: 375px) {}
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <div class="structure">
+            <div class="header">
+                <div style="width: 40%;" class="full-centered full-left">
+                    <img class="logo-img" src="https://i.imgur.com/zzTMrS8.png">
+                </div>
+                <div style="width: 60%;" class="full-centered full-right">
+                    <label class="pa-r-10 fs-17">
+                        Numero de pedido <span style="color: #0090e5;">{{reference}}</span> | Realizado el {{stringDate}}
+                    </label>
+                </div>
+            </div>
+            <div class="thanks-banner">
+                <div>
+                    <div class="thanks-label">
+                        Gracias por tu pedido.
+                    </div>
+                    <div class="thanks-label2">
+                        A continuación veras los detalles de tu compra.
+                    </div>
+                </div>
+            </div>
+            <div class="content-product">
+                <div class="full-width full-centered full-left element-label">
+                    Elementos
+                </div>
+                <div class="full-width card-product full-centered">
+                    <div style="width:20%;" class="full-centered">
+                        <!-- <img class="logo-img" src="{{srcImageProduct}}"> -->
+                        <img class="logo-img" src="https://i.imgur.com/yk2V9uC.jpg">
+                    </div>
+                    <div class="full-left" style="width:60%;">
+                        {{product}}
+                    </div>
+                    <div class="full-centered" style="width:20%;">
+                        ${{amount}}
+                    </div>
+                </div>
+            </div>
+            <div class="content-list-prices">
+                <div class="full-width full-centered full-left element-label" style="padding-top:40px;">
+                    Pago
+                </div>
+                <div class="full-width full-centered payment-description border-list">
+                    <div style="width:20%;" class="full-centered">
+                        <strong>Descripción de <br> la transacción:</strong>
+                    </div>
+                    <div class="full-left" style="width:80%;">
+                        {{commentForUser}}
+                    </div>
+                </div>
+                <div class="full-width full-centered payment-description">
+                    <div style="width:60%;" class="full-centered">
+                        
+                    </div>
+                    <div class="full-left" style="width:40%;">
+                        <div class="full-width">
+                            <div class="full-width pa-b-10" style="display: flex !important;">
+                                <div style="width:50%;">
+                                    Subtotal:
+                                </div>       
+                                <div style="width:50%;padding-right: 50px;" class="full-right">
+                                    ${{amount}}
+                                </div>                                
+                            </div>
+                            <div class="full-width total-row" style="display: flex !important;">
+                                <div style="width:50%;">
+                                    <strong>Total pedido</strong>
+                                </div>       
+                                <div style="width:50%;padding-right: 50px;" class="full-right">
+                                    <strong>${{amount}}</strong>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p style="text-align: justify;">Este correo tiene como único propósito el de informar los datos de compra en su cuenta, favor de no
+                    responder a este correo.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

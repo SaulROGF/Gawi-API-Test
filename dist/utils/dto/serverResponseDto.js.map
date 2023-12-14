@@ -1,0 +1,1 @@
+{"version":3,"file":"serverResponseDto.js","sourceRoot":"","sources":["../../../src/utils/dto/serverResponseDto.ts"],"names":[],"mappings":";;;AAAA,MAAa,iBAAiB;IAK1B,YAAa,GAAa,EAAG,IAAa,EAAG,GAAS;QAClD,IAAI,CAAC,KAAK,GAAC,GAAG,CAAC;QACf,IAAI,CAAC,OAAO,GAAC,IAAI,CAAC;QAClB,IAAI,CAAC,IAAI,GAAC,GAAG,CAAC;IAClB,CAAC;CACF;AAVH,8CAUG"}

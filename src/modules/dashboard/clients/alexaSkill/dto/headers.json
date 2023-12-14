@@ -1,0 +1,33 @@
+[
+    {
+        "connection": "close",
+        "user-agent": "Apache-HttpClient/UNAVAILABLE (Java/1.8.0_312)",
+        "content-type": "application/json; charset=utf-8",
+        "signature-256": "TSfGGrUZLHBfE1NrDlSB5ycmIxb7kDYXswDgRfHTQkk9cTy7tbg/X5kUYn7+I5j+l6aI6XcLHdniL7M2YvjnbpwFTLYMxcg5DD9Q78dw5dvnCnlB08rxUgtpye4OykxA6cDRu11n9y2PdoOXC+qwPbx2YrHT2pegU6HhMM1TiHj0Q0v2OlYltHkSXQnubVin100q8WjNmxVWt4oEd6q1jOIrJaKDJc4Fyn33Nec0mg8BYYmRa0894kthEMk7HlALtoAhXc/spncgC4Gm2Srr38Kuklh5tJtQCWr/BPxK7uFTmBEvQmOIP0UlC1+TNf0jWJ9tA5vDi4Eq0YKmY/BcCQ==",
+        "accept": "application/json",
+        "content-length": "3902",
+        "signaturecertchainurl": "https://s3.amazonaws.com/echo.api/echo-api-cert-11.pem",
+        "accept-charset": "utf-8",
+        "host": "api-test.gawi.mx",
+        "signature": "HrHJTnaCbvcr/O1WRESBobynBr2bKwY3FmCF3UoK6AsSwK2M+/3KUTiSNWwb5UzHdYpCk75wEslNJmVlZbCvgmA2Q+NSWdvZJydqG0gE12LZ7UHs7vH5WtImiCgtNACYlDA7qQffjRYY56xUoop6bTw1oLKKFEobAnmvthzbl5nqrE5nkqi++4BhJCrwBIz5X38FbWVIVt4MjmT0HeY1X8Bg39GYL7DjPBc6biejw9KhZgTByXvXejDhek5nF73ZvZcJHkL60GBE0jcwGhVvakrdbcn8qvFR0CcRPggR2RvJJcxpEME0pp+0RLTf5SAO0dVuBbb2b9ruFKGBT8o7UA==",
+        "x-forwarded-proto": "https",
+        "!~passenger-proto": "https",
+        "x-forwarded-for": "72.21.217.141",
+        "!~passenger-client-address": "72.21.217.141",
+        "!~passenger-envvars": "VU5JUVVFX0lEAFkwRFE1bjk4WXM2ejRtTjBjXzRyWFFBQUFWVQBTQ1JJUFRfVVJMAC9jbGllbnRzL2FsZXhhL3JlcXVlc3RzAFNDUklQVF9VUkkAaHR0cHM6Ly9hcGktdGVzdC5nYXdpLm14L2NsaWVudHMvYWxleGEvcmVxdWVzdHMAR0QtVVNFUk5BTUUAeDBhZ3lhbnRxczBtAEhUVFBTAG9uAFNTTF9UTFNfU05JAGFwaS10ZXN0Lmdhd2kubXgA"
+    },
+    {
+        "host": "987a-2806-2f0-34e0-20c6-407a-4882-ada-7d02.ngrok.io",
+        "user-agent": "Apache-HttpClient/UNAVAILABLE (Java/1.8.0_312)",
+        "content-length": "3799",
+        "accept": "application/json",
+        "accept-charset": "utf-8",
+        "content-type": "application/json; charset=utf-8",
+        "signature": "l50d8cU13AkQTl98uZ9tnpOw6tmP3BkGdi5JROvV6Vk4hmmlcfrKKENbOSViDEdA01gBlxXvheOo7G41sPHfi1QD+PtkzB9TlRaomu+CjGKSRHThWrXO4rF7yDdpOjjERzgfyH4hCCBc0gfE3V33KhpVQSHAny34c2tMUxvhrSKWWxKx9iLorKO5PCNKrTc8D0dVe4L286mYvVjRGlllWvBDtwtENbe3OqZnR9fp20u6RLWCJ6eS9fvp43oz6zSd1sFny9tkES1B0FXmqPICuhMYdsNdBoI25Fvu8XCjxdBchj9xaHo4650+aoHHqqz/TzBP+3dr7Ny4jIAV0tgXhQ==",
+        "signature-256": "oUotQA1ZNyXOdo5vIeV2e/+VyvUO9ItqxxeHud3ybNtNWmH5WgjSjxO7on0BUqWuIG/Z2YPVOMfd6wdmqrly4oIE+8/Q4mB2v8zMbPUmQYpTjvuafxWqodGxogi/T5dP1GKY7vqtOwWkajfVoX7ZrtUBJfMJS5gmMVB58+tl9mZ88Qto7PEzy8AlPrrmHHlQBKWQZIDvQDUH3MRJXnCAR9bFtVi/hDAMaREzEbJtzG+rLTwV4O36rs+wk4vXx+5PiaFPDRfJy7mdTcyQjbJLRzYCM3ivx0p3ew1TzL2qLtCNuy8hEXAGfLJxnNDlxZauMOnspmEbgJzRBNJ6gFJzXQ==",
+        "signaturecertchainurl": "https://s3.amazonaws.com/echo.api/echo-api-cert-11.pem",
+        "x-forwarded-for": "72.21.217.16",
+        "x-forwarded-proto": "https",
+        "accept-encoding": "gzip"
+    }
+]
