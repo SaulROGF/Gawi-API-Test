@@ -1,0 +1,65 @@
+import { Logger } from '@nestjs/common';
+import { ServerMessage } from '../../../../classes/ServerMessage.class';
+import { BillingInformation } from '../../../../models/billingInformation.entity';
+import { Card } from '../../../../models/card.entity';
+import { HistoryPayment } from '../../../../models/historyPayments.entity';
+import { State } from '../../../../models/state.entity';
+import { Town } from '../../../../models/town.entity';
+import { User } from '../../../../models/user.entity';
+import { ConektaService } from '../../../global/conekta-service/conekta-service.service';
+import { EmailsService } from '../../../global/emails/emails.service';
+import { FacturApiService } from '../../../global/factur-api/factur-api.service';
+import { Device } from '../../../../models/device.entity';
+export declare class PaymentsService {
+    private readonly stateRepository;
+    private readonly townRepository;
+    private readonly userRepository;
+    private readonly deviceRepository;
+    private readonly cardRepository;
+    private readonly historyPaymentsRepository;
+    private readonly billingInfoRepository;
+    private readonly facturapiService;
+    private readonly emailsService;
+    private readonly conektaService;
+    private readonly logger;
+    axios: any;
+    facturapi: any;
+    srcEmail: string;
+    constructor(stateRepository: typeof State, townRepository: typeof Town, userRepository: typeof User, deviceRepository: typeof Device, cardRepository: typeof Card, historyPaymentsRepository: typeof HistoryPayment, billingInfoRepository: typeof BillingInformation, facturapiService: FacturApiService, emailsService: EmailsService, conektaService: ConektaService, logger: Logger);
+    addMonths(months: number, date?: Date): Date;
+    manualSubscriptionsActivations(data: {
+        serialNumber: string;
+        type: number;
+        years: number;
+    }[]): Promise<ServerMessage>;
+    paymentsListDeviceSubscription(queryParams: any): Promise<ServerMessage>;
+    createPaymentSubscriptionInvoice(data: {
+        idHistoryPayment: number;
+    }): Promise<ServerMessage>;
+    getAlreadyBillsList(queryParams: any): Promise<ServerMessage>;
+    buildPaymentDto(payment: HistoryPayment): {
+        idHistoryPayment: number;
+        codePayment: string;
+        clientId: number;
+        clientName: string;
+        clientEmail: string;
+        clientPhone: string;
+        idDevice: number;
+        serialNumber: string;
+        idConektaAccount: string;
+        clientState: string;
+        clientTown: string;
+        clientCreatedAt: Date;
+        commentForUser: string;
+        product: string;
+        status: string;
+        needInvoice: boolean;
+        invoiced: boolean;
+        facturapiInvoiceId: string;
+        verificationUrl: string;
+        amount: number;
+        organizationName: string;
+        updatedAt: Date;
+        createdAt: Date;
+    };
+}

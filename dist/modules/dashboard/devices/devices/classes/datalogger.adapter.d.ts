@@ -1,0 +1,31 @@
+import { DataloggerSettings } from '../../../../../models/dataloggerSettings.entity';
+import { DataloggerHistory } from '../../../../../models/dataloggerHistory.entity';
+export declare class DataloggerHistoryAdapter {
+    ALERTS_LEN: number;
+    token: string;
+    signalQuality: number;
+    batteryLevel: number;
+    digitalInputs: number;
+    digitalOutputs: number;
+    analogInput1: number;
+    analogInput2: number;
+    analogInput3: number;
+    analogInput4: number;
+    signalType1: number;
+    signalType2: number;
+    signalType3: number;
+    signalType4: number;
+    flow1: number;
+    flow2: number;
+    consumption1: number;
+    consumption2: number;
+    alerts: number;
+    reason: number;
+    datetime: Date;
+    constructor(body: any | DataloggerHistory);
+    checkDatetime(): boolean;
+    check(): boolean;
+    formatAlerts(settings: DataloggerSettings): void;
+    private formatDateTime;
+    private formatSettingsToString;
+}
