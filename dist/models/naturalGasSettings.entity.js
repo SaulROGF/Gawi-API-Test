@@ -13,6 +13,26 @@ exports.NaturalGasSettings = void 0;
 const device_entity_1 = require("./device.entity");
 const sequelize_typescript_1 = require("sequelize-typescript");
 let NaturalGasSettings = class NaturalGasSettings extends sequelize_typescript_1.Model {
+    calculateNewStatus(noSetting, isForApply) {
+        let stringStatus = this.status.toString(2);
+        while (stringStatus.length < 14) {
+            stringStatus = "0" + stringStatus;
+        }
+        const newStatus = [];
+        for (let index = 0; index < stringStatus.length; index++) {
+            const element = parseInt(stringStatus[index]);
+            newStatus.push(element);
+        }
+        if (noSetting < 14) {
+            newStatus[13 - noSetting] = isForApply ? 0 : 1;
+        }
+        let newStringStatus = "";
+        for (let index = 0; index < newStatus.length; index++) {
+            const element = newStatus[index];
+            newStringStatus = newStringStatus + element.toString();
+        }
+        return parseInt(newStringStatus, 2);
+    }
 };
 __decorate([
     sequelize_typescript_1.Column({
@@ -34,80 +54,218 @@ __decorate([
 ], NaturalGasSettings.prototype, "idDevice", void 0);
 __decorate([
     sequelize_typescript_1.Column({
-        type: sequelize_typescript_1.DataType.INTEGER,
+        type: sequelize_typescript_1.DataType.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+    }),
+    __metadata("design:type", Boolean)
+], NaturalGasSettings.prototype, "wereApplied", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "status", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.STRING({ length: 100 }),
+        allowNull: true,
+        defaultValue: '0.0',
+    }),
+    __metadata("design:type", String)
+], NaturalGasSettings.prototype, "firmwareVersion", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
         allowNull: true,
         defaultValue: 1,
-        comment: 'Fecha de corte con default primer dia de cada mes',
     }),
     __metadata("design:type", Number)
 ], NaturalGasSettings.prototype, "serviceOutageDay", void 0);
 __decorate([
     sequelize_typescript_1.Column({
-        type: sequelize_typescript_1.DataType.FLOAT,
+        type: sequelize_typescript_1.DataType.FLOAT({ length: 10, decimals: 2 }),
         allowNull: true,
         defaultValue: 0.0,
-        comment: 'Limite para mandar la alerta de consumo exedido',
     }),
     __metadata("design:type", Number)
 ], NaturalGasSettings.prototype, "monthMaxConsumption", void 0);
 __decorate([
     sequelize_typescript_1.Column({
-        type: sequelize_typescript_1.DataType.STRING(150),
-        allowNull: false,
-        comment: 'Url a la cual el dispositivo esta transmitiendo continuamente',
+        type: sequelize_typescript_1.DataType.STRING({ length: 150 }),
+        allowNull: true,
+        defaultValue: '',
     }),
     __metadata("design:type", String)
 ], NaturalGasSettings.prototype, "apiUrl", void 0);
 __decorate([
     sequelize_typescript_1.Column({
-        type: sequelize_typescript_1.DataType.STRING(5),
-        allowNull: false,
-        comment: 'valores permitidos M3 , L y G',
+        type: sequelize_typescript_1.DataType.STRING({ length: 10 }),
+        allowNull: true,
+        defaultValue: '',
     }),
     __metadata("design:type", String)
 ], NaturalGasSettings.prototype, "consumptionUnits", void 0);
 __decorate([
     sequelize_typescript_1.Column({
-        type: sequelize_typescript_1.DataType.INTEGER,
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
         allowNull: true,
         defaultValue: 0,
-        comment: 'del 0 al 2 donde 0 = ipv4, 1 = ipv6 y 2 = ipv6v4',
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "storageFrequency", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.TIME,
+        allowNull: true,
+        defaultValue: '00:00',
+    }),
+    __metadata("design:type", String)
+], NaturalGasSettings.prototype, "storageTime", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.TIME,
+        allowNull: true,
+        defaultValue: '00:00',
+    }),
+    __metadata("design:type", String)
+], NaturalGasSettings.prototype, "dailyTime", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "customDailyTime", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "periodicFrequency", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.TIME,
+        allowNull: true,
+        defaultValue: '00:00',
+    }),
+    __metadata("design:type", String)
+], NaturalGasSettings.prototype, "periodicTime", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
     }),
     __metadata("design:type", Number)
 ], NaturalGasSettings.prototype, "ipProtocol", void 0);
 __decorate([
     sequelize_typescript_1.Column({
-        type: sequelize_typescript_1.DataType.INTEGER,
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
         allowNull: true,
         defaultValue: 0,
-        comment: 'del 0 al 3 donde 0 = none, 1 = PAP, 2 = CHAP, 3 = PAP/CHAP',
     }),
     __metadata("design:type", Number)
 ], NaturalGasSettings.prototype, "auth", void 0);
 __decorate([
     sequelize_typescript_1.Column({
-        type: sequelize_typescript_1.DataType.STRING(50),
+        type: sequelize_typescript_1.DataType.STRING({ length: 50 }),
         allowNull: true,
-        defaultValue: "",
-        comment: 'Comentario o pequeña descripción para identificar el dispositivo',
+        defaultValue: '',
     }),
     __metadata("design:type", String)
 ], NaturalGasSettings.prototype, "label", void 0);
 __decorate([
     sequelize_typescript_1.Column({
-        type: sequelize_typescript_1.DataType.BOOLEAN,
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "consumptionAlertType", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "consumptionAlertSetPoint", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
         allowNull: true,
         defaultValue: 1,
-        comment: 'Variable para apagar o prender el medidor de agua',
     }),
-    __metadata("design:type", Boolean)
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "consumptionExcessFlag", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 1,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "lowBatteryFlag", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 1,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "sensorFlag", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 1,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "darkSetPoint", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 1,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "darkFlag", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 1,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "lightSetPoint", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 1,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "lightFlag", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
 ], NaturalGasSettings.prototype, "isOn", void 0);
 __decorate([
     sequelize_typescript_1.Column({
         type: sequelize_typescript_1.DataType.DATE,
         allowNull: true,
         defaultValue: () => {
-            let date = new Date();
+            const date = new Date();
             return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
         },
         comment: '',
@@ -119,7 +277,7 @@ __decorate([
         type: sequelize_typescript_1.DataType.DATE,
         allowNull: true,
         defaultValue: () => {
-            let date = new Date();
+            const date = new Date();
             return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
         },
         comment: '',

@@ -1,5 +1,5 @@
 # .env files
-#.env
+.env
 
 # log files
 log/*
@@ -11,7 +11,7 @@ src/conf/ftpclient.conf.ts
 src/conf/database.conf.ts
 
 # compiled output
-#/dist
+/dist
 /node_modules
 # .htaccess
 
@@ -45,4 +45,3 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.htaccess

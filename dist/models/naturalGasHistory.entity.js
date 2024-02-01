@@ -23,7 +23,7 @@ __decorate([
         unique: true,
     }),
     __metadata("design:type", Number)
-], NaturalGasHistory.prototype, "idHistory", void 0);
+], NaturalGasHistory.prototype, "idNaturalGasHistory", void 0);
 __decorate([
     sequelize_typescript_1.ForeignKey(() => device_entity_1.Device),
     sequelize_typescript_1.Column({
@@ -35,16 +35,105 @@ __decorate([
 __decorate([
     sequelize_typescript_1.Column({
         type: sequelize_typescript_1.DataType.DOUBLE({ length: 10, decimals: 2 }),
-        allowNull: false,
+        allowNull: true,
+        defaultValue: 0.0,
     }),
     __metadata("design:type", Number)
 ], NaturalGasHistory.prototype, "consumption", void 0);
 __decorate([
     sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.DOUBLE({ length: 10, decimals: 2 }),
+        allowNull: true,
+        defaultValue: 0.0,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasHistory.prototype, "temperature", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasHistory.prototype, "signalQuality", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasHistory.prototype, "bateryLevel", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasHistory.prototype, "reason", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.TIME,
+        allowNull: true,
+        defaultValue: null,
+    }),
+    __metadata("design:type", String)
+], NaturalGasHistory.prototype, "hour", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+    }),
+    __metadata("design:type", Boolean)
+], NaturalGasHistory.prototype, "consumptionAlert", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+    }),
+    __metadata("design:type", Boolean)
+], NaturalGasHistory.prototype, "consumptionExcessAlert", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+    }),
+    __metadata("design:type", Boolean)
+], NaturalGasHistory.prototype, "lowBatteryAlert", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+    }),
+    __metadata("design:type", Boolean)
+], NaturalGasHistory.prototype, "sensorAlert", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+    }),
+    __metadata("design:type", Boolean)
+], NaturalGasHistory.prototype, "darkAlert", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+    }),
+    __metadata("design:type", Boolean)
+], NaturalGasHistory.prototype, "lightAlert", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
         type: sequelize_typescript_1.DataType.DATE,
         allowNull: true,
         defaultValue: () => {
-            let date = new Date();
+            const date = new Date();
             return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
         },
     }),
@@ -55,7 +144,19 @@ __decorate([
         type: sequelize_typescript_1.DataType.DATE,
         allowNull: true,
         defaultValue: () => {
-            let date = new Date();
+            const date = new Date();
+            return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+        },
+        comment: '',
+    }),
+    __metadata("design:type", Date)
+], NaturalGasHistory.prototype, "updatedAt", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.DATE,
+        allowNull: true,
+        defaultValue: () => {
+            const date = new Date();
             return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
         },
     }),

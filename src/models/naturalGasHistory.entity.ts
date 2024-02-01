@@ -16,6 +16,7 @@ import {
   createdAt: false,
 })
 export class NaturalGasHistory extends Model<NaturalGasHistory> {
+
   /**
    * Llave primaria
    */
@@ -26,10 +27,10 @@ export class NaturalGasHistory extends Model<NaturalGasHistory> {
     autoIncrement: true,
     unique: true,
   })
-  idHistory: number;
+  idNaturalGasHistory: number;
 
   /**
-   * Llaves foraneas
+   * Llave foranea
    */
   @ForeignKey(() => Device)
   @Column({
@@ -39,22 +40,103 @@ export class NaturalGasHistory extends Model<NaturalGasHistory> {
   idDevice: number;
 
   /**
-   * Consumo
+   * Configuraciones generales
    */
   @Column({
     type: DataType.DOUBLE({ length: 10, decimals: 2 }),
-    allowNull: false,
+    allowNull: true,
+    defaultValue: 0.0,
   })
   consumption: number;
 
+  @Column({
+    type: DataType.DOUBLE({ length: 10, decimals: 2 }),
+    allowNull: true,
+    defaultValue: 0.0,
+  })
+  temperature: number;
+
+  @Column({
+    type: DataType.INTEGER({ length: 11 }),
+    allowNull: true,
+    defaultValue: 0,
+  })
+  signalQuality: number;
+
+  @Column({
+    type: DataType.INTEGER({ length: 11 }),
+    allowNull: true,
+    defaultValue: 0,
+  })
+  bateryLevel: number;
+
+  @Column({
+    type: DataType.INTEGER({ length: 11 }),
+    allowNull: true,
+    defaultValue: 0,
+  })
+  reason: number;
+
+  @Column({
+    type: DataType.TIME,
+    allowNull: true,
+    defaultValue: null,
+  })
+  hour: string;
+
   /**
-   * Fechas de creacion y actualizacion
+   * Alertas
    */
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  consumptionAlert: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  consumptionExcessAlert: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  lowBatteryAlert: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  sensorAlert: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  darkAlert: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  lightAlert: boolean;
+
+   /**
+   * Fechas de creacion y actualizacion
+   */
+   @Column({
     type: DataType.DATE,
     allowNull: true,
     defaultValue: () => {
-      let date = new Date();
+      const date = new Date();
       return new Date(
         Date.UTC(
           date.getFullYear(),
@@ -73,7 +155,27 @@ export class NaturalGasHistory extends Model<NaturalGasHistory> {
     type: DataType.DATE,
     allowNull: true,
     defaultValue: () => {
-      let date = new Date();
+      const date = new Date();
+      return new Date(
+        Date.UTC(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate(),
+          date.getHours(),
+          date.getMinutes(),
+          date.getSeconds(),
+        ),
+      );
+    },
+    comment : '',
+  })
+  updatedAt: Date;
+  
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: () => {
+      const date = new Date();
       return new Date(
         Date.UTC(
           date.getFullYear(),
@@ -87,7 +189,6 @@ export class NaturalGasHistory extends Model<NaturalGasHistory> {
     },
   })
   createdAt: Date;
-
   /**
    * Relaciones
    */

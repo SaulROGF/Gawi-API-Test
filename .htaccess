@@ -1,0 +1,12 @@
+#PassengerBaseURI /
+#PassengerAppRoot /home/x0agyantqs0m/projects/Gawi-API/dist/
+
+#PassengerAppType    node
+#PassengerStartupFile main.js
+
+
+PassengerBaseURI /
+PassengerAppRoot /home/ews552f2s47e/projects/apiGawi/Gawi-API/dist/
+
+PassengerAppType    node
+PassengerStartupFile main.js

@@ -897,6 +897,7 @@ export class AdministratorService {
     }
 
     async getAllOrganizationDevicesList(idOrganization: number): Promise<ServerMessage> {
+        
         try {
             if (
                 idOrganization == null ||
@@ -905,7 +906,7 @@ export class AdministratorService {
                 return new ServerMessage(true, "Campos inválidos", {});
             }
 
-            let devicesList: Device[] = await this.deviceRepository.findAll<Device>({
+            const devicesList: Device[] = await this.deviceRepository.findAll<Device>({
                 where: {
                     idOrganization: idOrganization,
                 },
@@ -946,6 +947,7 @@ export class AdministratorService {
                 }, {
                     model: GasHistory,
                     as: 'gasHistory',
+                    limit: 1,
                     order: [['dateTime', 'DESC']],
                 }, {
                     model: NaturalGasHistory,
@@ -956,11 +958,12 @@ export class AdministratorService {
                 order: [['createdAt', 'DESC']]
             }).map((deviceData: Device) => {
                 let lastTransmition: Date = new Date();
-                let haveTransmission: boolean = false;
-
+                let haveTransmission = false;
+            
                 //'0 - gas, 1 - agua, 2 - datalogger', 3 - gas natural'
                 if (deviceData.type == 0) {
                     if (deviceData.gasHistory.length > 0) {
+                       
                         lastTransmition = deviceData.gasHistory[0].dateTime;
                         haveTransmission = true;
                     }
@@ -983,7 +986,7 @@ export class AdministratorService {
 
                 let transmisionError = false;
 
-                let today = new Date();
+                const today = new Date();
 
                 today.setHours(today.getHours() - 48);
 
@@ -1004,10 +1007,8 @@ export class AdministratorService {
                     lastTransmition: lastTransmition,
                     transmisionError: transmisionError,
                     haveTransmission: haveTransmission,
-                    gasHistory: deviceData.gasHistory,
-                 
 
-                    fullLocation: deviceData.town.name + ", " + deviceData.town.state.name,
+                    fullLocation: deviceData.town.name + " ," + deviceData.town.state.name,
                     //Organizationn
                     comercialName: deviceData.organization.comercialName,
                     logoUrl: deviceData.organization.logoUrl,
@@ -1029,6 +1030,7 @@ export class AdministratorService {
             return new ServerMessage(true, "A ocurrido un error", error);
         }
     }
+
 
     /**
      *

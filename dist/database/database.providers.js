@@ -37,7 +37,7 @@ exports.databaseProviders = [
                     timestamps: false,
                 },
                 dialect: 'mysql',
-                host: '198.12.216.200',
+                host: process.env.DB_HOST,
                 port: 3306,
                 logging: false,
                 username: process.env.DB_USR,
