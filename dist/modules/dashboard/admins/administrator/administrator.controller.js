@@ -259,7 +259,7 @@ __decorate([
 ], AdministratorController.prototype, "getAllHistoryNaturalGasDeviceData", null);
 __decorate([
     common_1.Post('get-all-history-water-device'),
-    common_1.UseGuards(passport_1.AuthGuard(), roles_guard_2.RoleOrganizationAdminGuard),
+    common_1.UseGuards(passport_1.AuthGuard(), roles_guard_1.RoleAdminGuard),
     __param(0, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),

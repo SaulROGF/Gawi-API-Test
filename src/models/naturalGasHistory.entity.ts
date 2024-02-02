@@ -129,6 +129,28 @@ export class NaturalGasHistory extends Model<NaturalGasHistory> {
   })
   lightAlert: boolean;
 
+  @Column({
+    type: DataType.STRING({ length: 100 }),
+    allowNull: true,
+    defaultValue: null,
+  })
+  STAT: string;
+
+
+  @Column({
+    type: DataType.STRING({ length: 100 }),
+    allowNull: true,
+    defaultValue: null,
+  })
+  TAI: string;
+
+  @Column({
+    type: DataType.STRING({ length: 100 }),
+    allowNull: true,
+    defaultValue: null,
+  })
+  CellID: string;
+
    /**
    * Fechas de creacion y actualizacion
    */

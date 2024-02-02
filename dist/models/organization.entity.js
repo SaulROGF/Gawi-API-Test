@@ -13,8 +13,6 @@ exports.Organization = void 0;
 const user_entity_1 = require("./user.entity");
 const device_entity_1 = require("./device.entity");
 const sequelize_typescript_1 = require("sequelize-typescript");
-const regions_entity_1 = require("./regions.entity");
-const stations_entity_1 = require("./stations.entity");
 let Organization = class Organization extends sequelize_typescript_1.Model {
 };
 __decorate([
@@ -205,14 +203,6 @@ __decorate([
     sequelize_typescript_1.HasMany(() => user_entity_1.User, 'idOrganization'),
     __metadata("design:type", Array)
 ], Organization.prototype, "users", void 0);
-__decorate([
-    sequelize_typescript_1.HasMany(() => regions_entity_1.Regions, 'idOrganization'),
-    __metadata("design:type", Array)
-], Organization.prototype, "regions", void 0);
-__decorate([
-    sequelize_typescript_1.HasMany(() => stations_entity_1.Stations),
-    __metadata("design:type", Array)
-], Organization.prototype, "stations", void 0);
 Organization = __decorate([
     sequelize_typescript_1.Table({
         tableName: 'organizations',

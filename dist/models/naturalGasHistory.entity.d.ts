@@ -15,6 +15,9 @@ export declare class NaturalGasHistory extends Model<NaturalGasHistory> {
     sensorAlert: boolean;
     darkAlert: boolean;
     lightAlert: boolean;
+    STAT: string;
+    TAI: string;
+    CellID: string;
     dateTime: Date;
     updatedAt: Date;
     createdAt: Date;

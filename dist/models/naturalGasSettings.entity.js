@@ -33,6 +33,77 @@ let NaturalGasSettings = class NaturalGasSettings extends sequelize_typescript_1
         }
         return parseInt(newStringStatus, 2);
     }
+    calculateNewMultiStatus(status, noSetting, isForApply) {
+        let stringStatus = status.toString(2);
+        while (stringStatus.length < 14) {
+            stringStatus = "0" + stringStatus;
+        }
+        const newStatus = [];
+        for (let index = 0; index < stringStatus.length; index++) {
+            const element = parseInt(stringStatus[index]);
+            newStatus.push(element);
+        }
+        if (noSetting < 14) {
+            newStatus[13 - noSetting] = isForApply ? 0 : 1;
+        }
+        let newStringStatus = "";
+        for (let index = 0; index < newStatus.length; index++) {
+            const element = newStatus[index];
+            newStringStatus = newStringStatus + element.toString();
+        }
+        return parseInt(newStringStatus, 2);
+    }
+    calcularBit(setting) {
+        let bit = 0;
+        switch (setting) {
+            case 'customDailyTime':
+                bit = 0;
+                break;
+            case 'consumptionUnits':
+                bit = 1;
+                break;
+            case 'storageFrequency':
+                bit = 2;
+                break;
+            case 'dailyTime':
+                bit = 3;
+                break;
+            case 'periodicFrequency':
+                bit = 4;
+                break;
+            case 'apiUrl':
+                bit = 5;
+                break;
+            case 'apn':
+                bit = 6;
+                break;
+            case 'label':
+                bit = 7;
+                break;
+            case 'consumptionAlertSetpoint':
+                bit = 8;
+                break;
+            case 'consumptionAlertType':
+                bit = 9;
+                break;
+            case 'lowBatteryFlag':
+                bit = 10;
+                break;
+            case 'sensorFlag':
+                bit = 11;
+                break;
+            case 'darkFlag':
+                bit = 12;
+                break;
+            case 'lightFlag':
+                bit = 13;
+                break;
+            default:
+                bit = 16383;
+                break;
+        }
+        return bit;
+    }
 };
 __decorate([
     sequelize_typescript_1.Column({
@@ -140,6 +211,14 @@ __decorate([
     }),
     __metadata("design:type", Number)
 ], NaturalGasSettings.prototype, "customDailyTime", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
+], NaturalGasSettings.prototype, "dailyTransmission", void 0);
 __decorate([
     sequelize_typescript_1.Column({
         type: sequelize_typescript_1.DataType.INTEGER({ length: 11 }),

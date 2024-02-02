@@ -1,34 +1,7 @@
 import { OrganizationDataService } from './organization-data.service';
 import { ServerMessage } from './../../../../classes/ServerMessage.class';
-import { CreateOrganizationRegionDto } from './dto/createOrganization.dto';
-import { EditOrganizationRegionDto } from './dto/editOrganizationRegion.dto';
-import { CreateRegionZoneDto } from './dto/createRegionZone.dto';
-import { EditZoneDto } from './dto/editZone.dto';
-import { CreateStationDto, UpdateStationDto } from './dto/station.dtos';
-import { createDeviceStationDto } from './dto/createDeviceStation.dto';
 export declare class OrganizationDataController {
     private readonly organizationDataService;
     constructor(organizationDataService: OrganizationDataService);
     getAdminAccountData(req: any): Promise<ServerMessage>;
-    findRegionsByOrganization(idOrganization: number): Promise<ServerMessage>;
-    createOrganizationRegion(body: CreateOrganizationRegionDto): Promise<ServerMessage>;
-    editOrganizationRegion(idRegion: number, editOrganizationRegionDto: EditOrganizationRegionDto): Promise<ServerMessage>;
-    deleteOrganizationRegion(idRegion: number): Promise<ServerMessage>;
-    findZonesByRegion(idRegion: number): Promise<ServerMessage>;
-    findZoneByOrganization(idOrganization: number): Promise<ServerMessage>;
-    createRegionZone(createZoneDto: CreateRegionZoneDto): Promise<ServerMessage>;
-    editZone(idZone: number, editZoneDto: EditZoneDto): Promise<ServerMessage>;
-    deleteZone(idZone: number): Promise<ServerMessage>;
-    getStationsByOrganization(idOrganization: number): Promise<ServerMessage>;
-    getStationsByZone(idZone: number): Promise<ServerMessage>;
-    creationStation(createStationDto: CreateStationDto): Promise<ServerMessage>;
-    updateStation(idStation: number, updateStationDto: UpdateStationDto): Promise<ServerMessage>;
-    deleteStation(idStation: number): Promise<ServerMessage>;
-    findDeviceByStation(idStation: number): Promise<ServerMessage>;
-    findDeviceByZone(idZone: number): Promise<ServerMessage>;
-    findDeviceByRegion(idRegion: number): Promise<ServerMessage>;
-    findAllDevicesByOrganization(idOrganization: number): Promise<ServerMessage>;
-    createDeviceInStation(device: number, createDeviceStationDto: createDeviceStationDto): Promise<ServerMessage>;
-    deleteDeviceInStation(idDevice: number): Promise<ServerMessage>;
-    findSupervisorList(idOrganization: number): Promise<ServerMessage>;
 }

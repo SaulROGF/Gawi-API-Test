@@ -14,6 +14,7 @@ export declare class NaturalGasSettings extends Model<NaturalGasSettings> {
     storageTime: string;
     dailyTime: string;
     customDailyTime: number;
+    dailyTransmission: number;
     periodicFrequency: number;
     periodicTime: string;
     ipProtocol: number;
@@ -33,4 +34,6 @@ export declare class NaturalGasSettings extends Model<NaturalGasSettings> {
     createdAt: Date;
     device: Device;
     calculateNewStatus(noSetting: number, isForApply: boolean): number;
+    calculateNewMultiStatus(status: number, noSetting: number, isForApply: boolean): number;
+    calcularBit(setting: string): number;
 }

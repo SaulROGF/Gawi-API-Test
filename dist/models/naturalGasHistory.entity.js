@@ -130,6 +130,30 @@ __decorate([
 ], NaturalGasHistory.prototype, "lightAlert", void 0);
 __decorate([
     sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.STRING({ length: 100 }),
+        allowNull: true,
+        defaultValue: null,
+    }),
+    __metadata("design:type", String)
+], NaturalGasHistory.prototype, "STAT", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.STRING({ length: 100 }),
+        allowNull: true,
+        defaultValue: null,
+    }),
+    __metadata("design:type", String)
+], NaturalGasHistory.prototype, "TAI", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.STRING({ length: 100 }),
+        allowNull: true,
+        defaultValue: null,
+    }),
+    __metadata("design:type", String)
+], NaturalGasHistory.prototype, "CellID", void 0);
+__decorate([
+    sequelize_typescript_1.Column({
         type: sequelize_typescript_1.DataType.DATE,
         allowNull: true,
         defaultValue: () => {

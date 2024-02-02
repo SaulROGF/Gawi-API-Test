@@ -20,6 +20,7 @@ const gasSettings_providers_1 = require("./../../../../models/repositoriesModels
 const dataloggerHistory_providers_1 = require("../../../../models/repositoriesModels/dataloggerHistory.providers");
 const dataloggerSettings_providers_1 = require("../../../../models/repositoriesModels/dataloggerSettings.providers");
 const naturalGasHistory_providers_1 = require("../../../../models/repositoriesModels/naturalGasHistory.providers");
+const naturalGasSettings_providers_1 = require("../../../../models/repositoriesModels/naturalGasSettings.providers");
 const town_providers_1 = require("./../../../../models/repositoriesModels/town.providers");
 const global_services_module_1 = require("./../../../../modules/global/global-services.module");
 const notifications_entity_1 = require("../../../../models/notifications.entity");
@@ -51,6 +52,7 @@ DevicesModule = __decorate([
             ...dataloggerHistory_providers_1.dataloggerHistoryProviders,
             ...dataloggerSettings_providers_1.dataloggerSettingsProviders,
             ...naturalGasHistory_providers_1.naturalGasHistoryProviders,
+            ...naturalGasSettings_providers_1.naturalGasSettingsProviders,
             ...town_providers_1.townProviders,
             ...apn_entity_1.apnProviders,
             ...notifications_entity_1.notificationProviders,

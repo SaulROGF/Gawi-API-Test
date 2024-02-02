@@ -34,7 +34,6 @@ const path = require("path");
 const payments_module_1 = require("./modules/dashboard/admins/payments/payments.module");
 const alexaSkill_module_1 = require("./modules/dashboard/clients/alexaSkill/alexaSkill.module");
 const config_1 = require("@nestjs/config");
-const fieldtest_module_1 = require("./modules/dashboard/admins/fieldtest/fieldtest.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -42,7 +41,7 @@ AppModule = __decorate([
         imports: [
             mailer_1.MailerModule.forRoot({
                 transport: {
-                    host: 'mail.gawi.mx',
+                    host: 'gawi.mx',
                     port: 465,
                     ignoreTLS: false,
                     secure: true,
@@ -78,11 +77,6 @@ AppModule = __decorate([
                         filename: 'error.log',
                         level: 'error',
                     }),
-                    new winston.transports.File({
-                        dirname: path.join(__dirname, './../log/api/'),
-                        filename: 'api.log',
-                        level: 'info',
-                    })
                 ],
                 format: winston.format.combine(winston.format.timestamp({
                     format: 'MMM-DD-YYYY HH:mm:ss'
@@ -107,7 +101,6 @@ AppModule = __decorate([
             payments_module_1.PaymentsModule,
             alexaSkill_module_1.AlexaSkillModule,
             config_1.ConfigModule.forRoot(),
-            fieldtest_module_1.FieldtestModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

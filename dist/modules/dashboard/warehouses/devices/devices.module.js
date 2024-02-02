@@ -17,6 +17,7 @@ const waterSettings_providers_1 = require("../../../../models/repositoriesModels
 const gasSettings_providers_1 = require("../../../../models/repositoriesModels/gasSettings.providers");
 const apn_entity_1 = require("../../../../models/apn.entity");
 const dataloggerSettings_providers_1 = require("../../../../models/repositoriesModels/dataloggerSettings.providers");
+const naturalGasSettings_providers_1 = require("../../../../models/repositoriesModels/naturalGasSettings.providers");
 let DevicesModule = class DevicesModule {
 };
 DevicesModule = __decorate([
@@ -34,6 +35,7 @@ DevicesModule = __decorate([
             ...gasSettings_providers_1.gasSettingsProviders,
             ...apn_entity_1.apnProviders,
             ...dataloggerSettings_providers_1.dataloggerSettingsProviders,
+            ...naturalGasSettings_providers_1.naturalGasSettingsProviders,
         ]
     })
 ], DevicesModule);

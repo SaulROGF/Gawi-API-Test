@@ -21,6 +21,7 @@ const waterHistory_providers_1 = require("../../../../models/repositoriesModels/
 const waterSettings_providers_1 = require("../../../../models/repositoriesModels/waterSettings.providers");
 const devices_controller_1 = require("./devices.controller");
 const devices_service_1 = require("./devices.service");
+const gas_natural_module_1 = require("./gas-natural/gas-natural.module");
 let DevicesModule = class DevicesModule {
 };
 DevicesModule = __decorate([
@@ -31,6 +32,7 @@ DevicesModule = __decorate([
                 defaultStrategy: 'jwt',
                 session: false,
             }),
+            gas_natural_module_1.GasNaturalModule,
         ],
         exports: [devices_service_1.DevicesService],
         controllers: [devices_controller_1.DevicesController],

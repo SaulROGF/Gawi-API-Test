@@ -3,5 +3,4 @@ export declare class AppService {
     private readonly logger;
     constructor(logger: Logger);
     getHello(): string;
-    postHello(): string;
 }

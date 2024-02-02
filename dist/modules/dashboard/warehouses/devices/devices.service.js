@@ -16,12 +16,14 @@ exports.DevicesService = void 0;
 const common_1 = require("@nestjs/common");
 const ServerMessage_class_1 = require("../../../../classes/ServerMessage.class");
 const sequelize_1 = require("sequelize");
+const naturalGasSettings_entity_1 = require("../../../../models/naturalGasSettings.entity");
 let DevicesService = class DevicesService {
-    constructor(deviceRepository, waterSettingsRepository, dataloggerSettingsRepository, gasSettingsRepository, apnRepository, logger) {
+    constructor(deviceRepository, waterSettingsRepository, dataloggerSettingsRepository, gasSettingsRepository, naturalGasSettingsRepository, apnRepository, logger) {
         this.deviceRepository = deviceRepository;
         this.waterSettingsRepository = waterSettingsRepository;
         this.dataloggerSettingsRepository = dataloggerSettingsRepository;
         this.gasSettingsRepository = gasSettingsRepository;
+        this.naturalGasSettingsRepository = naturalGasSettingsRepository;
         this.apnRepository = apnRepository;
         this.logger = logger;
     }
@@ -222,6 +224,39 @@ let DevicesService = class DevicesService {
                     idDevice: deviceData.idDevice,
                 });
             }
+            else if (deviceData.type == 3) {
+                const newGasNaturalSettings = await this.naturalGasSettingsRepository.create({
+                    idDevice: deviceData.idDevice,
+                    wereApplied: 0,
+                    status: 16383,
+                    firmwareVersion: "beta",
+                    serviceOutageDay: 15,
+                    monthMaxConsumption: 0.0,
+                    apiUrl: process.env.API_URL,
+                    consumptionUnits: "L",
+                    storageFrequency: 1440,
+                    storageTime: "00:00",
+                    dailyTime: "00:00",
+                    customDailyTime: 0,
+                    dailyTransmission: 1,
+                    periodicFrequency: 1440,
+                    periodicTime: "00:00",
+                    ipProtocol: 1,
+                    auth: 1,
+                    label: "Medidor de gas natural beta 1.0",
+                    consumptionAlertType: 0,
+                    consumptionAlertSetPoint: 0,
+                    consumptionExcessFlag: 1,
+                    lowBatteryFlag: 1,
+                    sensorFlag: 1,
+                    darkSetPoint: 10,
+                    darkFlag: 1,
+                    lightSetPoint: 90,
+                    lightFlag: 1,
+                    isOn: 0,
+                });
+                newGasNaturalSettings.save();
+            }
             return new ServerMessage_class_1.ServerMessage(false, "Ajustes del dispositivo creados con exito.", {});
         }
         catch (error) {
@@ -336,9 +371,10 @@ DevicesService = __decorate([
     __param(1, common_1.Inject('WaterSettingsRepository')),
     __param(2, common_1.Inject('DataloggerSettingsRepository')),
     __param(3, common_1.Inject('GasSettingsRepository')),
-    __param(4, common_1.Inject('ApnRepository')),
-    __param(5, common_1.Inject('winston')),
-    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object])
+    __param(4, common_1.Inject('NaturalGasSettingsRepository')),
+    __param(5, common_1.Inject('ApnRepository')),
+    __param(6, common_1.Inject('winston')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object, Object])
 ], DevicesService);
 exports.DevicesService = DevicesService;
 //# sourceMappingURL=devices.service.js.map

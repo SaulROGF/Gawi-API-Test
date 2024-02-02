@@ -1,8 +1,6 @@
 import { User } from './user.entity';
 import { Device } from './device.entity';
 import { Model } from 'sequelize-typescript';
-import { Regions } from './regions.entity';
-import { Stations } from './stations.entity';
 export declare class Organization extends Model<Organization> {
     idOrganization: number;
     comercialName: string;
@@ -30,6 +28,4 @@ export declare class Organization extends Model<Organization> {
     deleted: boolean;
     devices: Device[];
     users: User[];
-    regions: Regions[];
-    stations: Stations[];
 }

@@ -17,37 +17,21 @@ const common_1 = require("@nestjs/common");
 const devices_service_1 = require("./devices.service");
 const jwt_1 = require("@nestjs/jwt");
 let DevicesController = class DevicesController {
-    constructor(devicesService, jwtService, logger) {
+    constructor(devicesService, jwtService) {
         this.devicesService = devicesService;
         this.jwtService = jwtService;
-        this.logger = logger;
     }
     async saveGasMeasuresEndpoint(body) {
-        return this.devicesService.saveGasMeasures(body);
+        return this.devicesService.saveNaturalGasMeasures(body);
     }
-    async loginEndpoint(body, req) {
-        const logData = {
-            method: req.method,
-            url: req.url,
-            headers: req.headers,
-            body: req.body
-        };
-        this.logger.info(JSON.stringify(logData));
-        const result = await this.devicesService.login(body);
-        this.logger.info(`Response: ${JSON.stringify(result)}`);
-        return result;
+    async markNaturalGasSettingsAsAppliedEndpoint(body) {
+        return this.devicesService.markNaturalGasSettingsAsApplied(body);
     }
-    async saveWaterDeviceDataEndpoint(body, req) {
-        const logData = {
-            method: req.method,
-            url: req.url,
-            headers: req.headers,
-            body: req.body
-        };
-        this.logger.info(JSON.stringify(logData));
-        const result = await this.devicesService.saveWaterDeviceData(body);
-        this.logger.info(`Response: ${JSON.stringify(result)}`);
-        return result;
+    async loginEndpoint(body) {
+        return await this.devicesService.login(body);
+    }
+    async saveWaterDeviceDataEndpoint(body) {
+        return this.devicesService.saveWaterDeviceData(body);
     }
     async markWaterDeviceSettingsAsAppliedEndpoint(body) {
         return this.devicesService.markWaterDeviceSettingsAsApplied(body);
@@ -76,19 +60,24 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], DevicesController.prototype, "saveGasMeasuresEndpoint", null);
 __decorate([
+    common_1.Post('ng-mark'),
+    __param(0, common_1.Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], DevicesController.prototype, "markNaturalGasSettingsAsAppliedEndpoint", null);
+__decorate([
     common_1.Post('login/'),
     __param(0, common_1.Body()),
-    __param(1, common_1.Request()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], DevicesController.prototype, "loginEndpoint", null);
 __decorate([
     common_1.Post('wd-save'),
     __param(0, common_1.Body()),
-    __param(1, common_1.Request()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], DevicesController.prototype, "saveWaterDeviceDataEndpoint", null);
 __decorate([
@@ -145,9 +134,8 @@ __decorate([
 ], DevicesController.prototype, "serveByFTPEndpoint", null);
 DevicesController = __decorate([
     common_1.Controller('devs'),
-    __param(2, common_1.Inject('winston')),
     __metadata("design:paramtypes", [devices_service_1.DevicesService,
-        jwt_1.JwtService, Object])
+        jwt_1.JwtService])
 ], DevicesController);
 exports.DevicesController = DevicesController;
 //# sourceMappingURL=devices.controller.js.map

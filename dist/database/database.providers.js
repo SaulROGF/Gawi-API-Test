@@ -23,11 +23,6 @@ const dataloggerSettings_entity_1 = require("../models/dataloggerSettings.entity
 const dataloggerHistory_entity_1 = require("../models/dataloggerHistory.entity");
 const naturalGasHistory_entity_1 = require("../models/naturalGasHistory.entity");
 const naturalGasSettings_entity_1 = require("../models/naturalGasSettings.entity");
-const fieldDevice_entity_1 = require("../models/fieldDevice.entity");
-const regions_entity_1 = require("../models/regions.entity");
-const zones_entity_1 = require("../models/zones.entity");
-const stations_entity_1 = require("../models/stations.entity");
-const deviceStation_entity_1 = require("../models/deviceStation.entity");
 exports.databaseProviders = [
     {
         provide: 'SequelizeInstance',
@@ -66,11 +61,6 @@ exports.databaseProviders = [
                 dataloggerSettings_entity_1.DataloggerSettings,
                 naturalGasSettings_entity_1.NaturalGasSettings,
                 naturalGasHistory_entity_1.NaturalGasHistory,
-                fieldDevice_entity_1.FieldDevice,
-                regions_entity_1.Regions,
-                zones_entity_1.Zones,
-                stations_entity_1.Stations,
-                deviceStation_entity_1.DeviceStation
             ]);
             await sequelize.sync();
             return sequelize;

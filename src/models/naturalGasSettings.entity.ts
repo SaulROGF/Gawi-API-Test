@@ -111,6 +111,13 @@ export class NaturalGasSettings extends Model<NaturalGasSettings> {
     defaultValue: 0,
   })
   customDailyTime: number;
+  
+  @Column({
+    type: DataType.INTEGER({ length: 11 }),
+    allowNull: true,
+    defaultValue: 0,
+  })
+  dailyTransmission: number;
 
   @Column({
     type: DataType.INTEGER({ length: 11 }),
