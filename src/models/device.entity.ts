@@ -24,7 +24,6 @@ import { DataloggerSettings } from './dataloggerSettings.entity';
 import { DataloggerHistory } from './dataloggerHistory.entity';
 import { NaturalGasHistory } from './naturalGasHistory.entity';
 import { NaturalGasSettings } from './naturalGasSettings.entity';
-import { DeviceStation } from './deviceStation.entity';
 
 @Table({
   tableName: 'devices',
@@ -263,9 +262,6 @@ export class Device extends Model<Device> {
     },
   })
   updatedAt: Date;
-
-  
- 
 
   /**
    * join declarations

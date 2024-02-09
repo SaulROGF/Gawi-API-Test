@@ -129,6 +129,7 @@ export class NaturalGasHistory extends Model<NaturalGasHistory> {
   })
   lightAlert: boolean;
 
+
   @Column({
     type: DataType.STRING({ length: 100 }),
     allowNull: true,

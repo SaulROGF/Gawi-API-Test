@@ -52,8 +52,7 @@ export class PublicService {
       }, {
         expiresIn: lifeTime,
       });
-      const recoveryUrl = `${process.env.WEB_URL}/#/recovery/${token}`;
-      // const recoveryUrl = `https://gawi.mx/#/recovery/${token}`;
+      const recoveryUrl = `${process.env.API_URL}/#/recovery/${token}`;
       
       //
       //

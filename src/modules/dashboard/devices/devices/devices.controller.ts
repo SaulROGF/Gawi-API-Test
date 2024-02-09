@@ -7,8 +7,6 @@ import {
   UseGuards,
   Body,
   Param,
-  Inject,
-  Response,
 } from '@nestjs/common';
 import {
   RoleDeviceGuard,
@@ -19,15 +17,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { ServerMessage } from '../../../../classes/ServerMessage.class';
 import { WaterHistoryDto } from './classes/waterHistory.dto';
 import { JwtService } from '@nestjs/jwt';
-import { Logger } from 'winston';
-import { stringify } from 'querystring';
 
 @Controller('devs')
 export class DevicesController {
   constructor(
     private readonly devicesService: DevicesService,
     private jwtService: JwtService,
-    @Inject('winston') private readonly logger: Logger
   ) {}
 
 
@@ -37,10 +32,21 @@ export class DevicesController {
    * @returns confirmación de recepción del historial
    */
   @Post('ng-save')
-  async saveGasMeasuresEndpoint(@Body() body: any, ): Promise<any> {
-    
-    return this.devicesService.saveGasMeasures(body);
+  async saveGasMeasuresEndpoint(@Body() body: any): Promise<any> {
+    return this.devicesService.saveNaturalGasMeasures(body);
   }
+
+    /**
+   * marcar settings como aplicados
+   * @param idDevice id del dispositivo
+   * @returns confirmación de la aplicación de settings
+   */
+    @Post('ng-mark')
+    async markNaturalGasSettingsAsAppliedEndpoint(
+      @Body() body: any,
+    ): Promise<any> {
+      return this.devicesService.markNaturalGasSettingsAsApplied(body);
+    }
 
   /**
    * Login para los dispositivos de agua y gas
@@ -48,18 +54,8 @@ export class DevicesController {
    * @returns token generado para el dispositivo
    */
   @Post('login/')
-  async loginEndpoint(@Body() body: any, @Request() req,): Promise<any> {
-    const logData = {
-      method: req.method,
-      url: req.url,
-      headers: req.headers,
-      body: req.body
-    };
-    this.logger.info(JSON.stringify(logData));
-    const result = await this.devicesService.login(body);
-    this.logger.info(`Response: ${JSON.stringify(result)}`);
-    return result;
-    
+  async loginEndpoint(@Body() body: any): Promise<any> {
+    return await this.devicesService.login(body);
   }
 
   /**
@@ -69,18 +65,9 @@ export class DevicesController {
    * @returns confirmación de recepción del historial
    */
   @Post('wd-save')
-  async saveWaterDeviceDataEndpoint(@Body() body: any, @Request() req): Promise<any> {
-    const logData = {
-      method: req.method,
-      url: req.url,
-      headers: req.headers,
-      body: req.body
-    };
-    this.logger.info(JSON.stringify(logData));
-    const result = await this.devicesService.saveWaterDeviceData(body);
-    this.logger.info(`Response: ${JSON.stringify(result)}`);
-    return result;
-
+  async saveWaterDeviceDataEndpoint(@Body() body: any): Promise<any> {
+    
+    return this.devicesService.saveWaterDeviceData(body);
   }
 
   /**

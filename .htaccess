@@ -1,12 +1,8 @@
-#PassengerBaseURI /
-#PassengerAppRoot /home/x0agyantqs0m/projects/Gawi-API/dist/
-
-#PassengerAppType    node
-#PassengerStartupFile main.js
-
-
 PassengerBaseURI /
-PassengerAppRoot /home/ews552f2s47e/projects/apiGawi/Gawi-API/dist/
+PassengerAppRoot /home/a2zvndk4ew7n/projects/apiGawi/Gawi-API/dist/
 
 PassengerAppType    node
 PassengerStartupFile main.js
+
+deny from 3.33.130.190
+deny from 173.201.187.99

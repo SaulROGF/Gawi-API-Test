@@ -11,6 +11,7 @@ import { gasSettingsProviders } from './../../../../models/repositoriesModels/ga
 import { dataloggerHistoryProviders } from 'src/models/repositoriesModels/dataloggerHistory.providers';
 import { dataloggerSettingsProviders } from 'src/models/repositoriesModels/dataloggerSettings.providers';
 import { naturalGasHistoryProviders } from 'src/models/repositoriesModels/naturalGasHistory.providers';
+import { naturalGasSettingsProviders } from 'src/models/repositoriesModels/naturalGasSettings.providers';
 import { townProviders } from './../../../../models/repositoriesModels/town.providers';
 import { GlobalServicesModule } from './../../../../modules/global/global-services.module';
 import { notificationProviders } from 'src/models/notifications.entity';
@@ -41,6 +42,7 @@ import { PushNotificationsService } from 'src/modules/global/push-notifications/
     ...dataloggerHistoryProviders,
     ...dataloggerSettingsProviders,
     ...naturalGasHistoryProviders,
+    ...naturalGasSettingsProviders,
     ...townProviders,
     ...apnProviders,
     ...notificationProviders,

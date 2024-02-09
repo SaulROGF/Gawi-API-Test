@@ -8,6 +8,7 @@ import { WaterSettings } from '../../../../models/waterSettings.entity';
 import { Apn } from '../../../../models/apn.entity';
 import { Logger } from 'winston';
 import { DataloggerSettings } from '../../../../models/dataloggerSettings.entity';
+import { NaturalGasSettings } from 'src/models/naturalGasSettings.entity';
 
 @Injectable()
 export class DevicesService {
@@ -17,6 +18,8 @@ export class DevicesService {
         @Inject('WaterSettingsRepository') private readonly waterSettingsRepository: typeof WaterSettings,
         @Inject('DataloggerSettingsRepository') private readonly dataloggerSettingsRepository: typeof DataloggerSettings,
         @Inject('GasSettingsRepository') private readonly gasSettingsRepository: typeof GasSettings,
+        @Inject('NaturalGasSettingsRepository')
+        private readonly naturalGasSettingsRepository: typeof NaturalGasSettings,
         @Inject('ApnRepository') private readonly apnRepository: typeof Apn,
         @Inject('winston') private readonly logger: Logger,
     ) {
@@ -265,6 +268,40 @@ export class DevicesService {
                      */
                      idDevice: deviceData.idDevice,
                 });
+            }else if (deviceData.type == 3) {
+                //Gas natural
+
+               const newGasNaturalSettings: NaturalGasSettings = await this.naturalGasSettingsRepository.create<NaturalGasSettings>({
+                idDevice: deviceData.idDevice,
+                wereApplied: 0,
+                status: 16383,
+                firmwareVersion: "beta",
+                serviceOutageDay: 15,
+                monthMaxConsumption: 0.0,
+                apiUrl: process.env.API_URL,
+                consumptionUnits: "L",
+                storageFrequency: 1440,
+                storageTime: "00:00",
+                dailyTime: "00:00",
+                customDailyTime: 0,
+                dailyTransmission: 1,
+                periodicFrequency: 1440,
+                periodicTime: "00:00",
+                ipProtocol: 1,
+                auth: 1,
+                label: "Medidor de gas natural beta 1.0",
+                consumptionAlertType: 0,
+                consumptionAlertSetPoint: 0,
+                consumptionExcessFlag: 1,
+                lowBatteryFlag: 1,
+                sensorFlag: 1,
+                darkSetPoint: 10,
+                darkFlag: 1,
+                lightSetPoint: 90,
+                lightFlag: 1,
+                isOn: 0,
+            });
+            newGasNaturalSettings.save();
             }
 
             return new ServerMessage(false, "Ajustes del dispositivo creados con exito.", {});

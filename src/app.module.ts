@@ -27,7 +27,6 @@ import { PushNotificationsService } from './modules/global/push-notifications/pu
 import { PaymentsModule } from './modules/dashboard/admins/payments/payments.module';
 import { AlexaSkillModule } from './modules/dashboard/clients/alexaSkill/alexaSkill.module';
 import { ConfigModule } from '@nestjs/config';
-import { FieldtestModule } from './modules/dashboard/admins/fieldtest/fieldtest.module';
 
 
 @Module({
@@ -35,7 +34,7 @@ import { FieldtestModule } from './modules/dashboard/admins/fieldtest/fieldtest.
     
     MailerModule.forRoot({
       transport: {
-        host: 'mail.gawi.mx', //Servidor correo SMTP
+        host: 'gawi.mx', //Servidor correo SMTP
         port: 465, //Puerto del servidor del correo
         ignoreTLS: false,
         secure: true, // use SSL
@@ -74,11 +73,6 @@ import { FieldtestModule } from './modules/dashboard/admins/fieldtest/fieldtest.
           filename: 'error.log',
           level: 'error',
         }),
-        new winston.transports.File({
-          dirname: path.join(__dirname, './../log/api/'), 
-          filename: 'api.log', 
-          level: 'info',
-        })
       ],
       format: winston.format.combine(
         /* winston.format.colorize({ all: true }),
@@ -118,7 +112,9 @@ import { FieldtestModule } from './modules/dashboard/admins/fieldtest/fieldtest.
     PaymentsModule,
     AlexaSkillModule,
     ConfigModule.forRoot(),
-    FieldtestModule,
+   
+   
+
   ],
   controllers: [AppController],
   providers: [AppService],

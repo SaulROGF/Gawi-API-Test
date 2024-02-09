@@ -822,7 +822,7 @@ export class AdministratorService {
                 }],
                 order: [['createdAt', 'DESC']]
             }).map((deviceData: Device) => {
-                let lastTransmition: Date = new Date();
+                                let lastTransmition: Date = new Date();
                 let haveTransmission: boolean = false;
 
                 //'0 - gas, 1 - agua, 2 - datalogger, 3 - gas natural'
@@ -857,7 +857,7 @@ export class AdministratorService {
                 if (new Date(lastTransmition) < today) {
                     transmisionError = true;
                 }
-
+                
                 return Object.assign({
                     //Device data
                     idDevice: deviceData.idDevice,
@@ -892,10 +892,12 @@ export class AdministratorService {
             });
         } catch (error) {
             this.logger.error(error);
+            console.log(error)
             return new ServerMessage(true, "A ocurrido un error", error);
         }
     }
 
+    
     async getAllOrganizationDevicesList(idOrganization: number): Promise<ServerMessage> {
         
         try {
@@ -1030,7 +1032,6 @@ export class AdministratorService {
             return new ServerMessage(true, "A ocurrido un error", error);
         }
     }
-
 
     /**
      *
@@ -1222,7 +1223,7 @@ export class AdministratorService {
             let fromToHistorial: NaturalGasHistory[] = await this.naturalGasHistoryRepository.findAll<NaturalGasHistory>(
                 {
                     attributes: [
-                        'idHistory',
+                        'idNaturalGasHistory',
                         'idDevice',
                         'consumption',
                         'dateTime',

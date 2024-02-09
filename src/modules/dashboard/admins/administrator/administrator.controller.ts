@@ -193,7 +193,7 @@ export class AdministratorController {
      * 
      */
     @Post('get-all-history-water-device')
-    @UseGuards(AuthGuard(), RoleOrganizationAdminGuard)
+    @UseGuards(AuthGuard(), RoleAdminGuard)
     getAllHistoryWaterDeviceData(/* @Request() req: any, */@Body() body: any): Promise<ServerMessage> {
         return this.administratorService.getAllHistoryWaterDeviceData(body);
     }

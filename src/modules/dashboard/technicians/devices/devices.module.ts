@@ -12,6 +12,7 @@ import { waterHistoryProviders } from '../../../../models/repositoriesModels/wat
 import { waterSettingsProviders } from '../../../../models/repositoriesModels/waterSettings.providers';
 import { DevicesController } from './devices.controller';
 import { DevicesService } from './devices.service';
+import { GasNaturalModule } from './gas-natural/gas-natural.module';
 
 @Module({
     imports: [
@@ -20,6 +21,8 @@ import { DevicesService } from './devices.service';
           defaultStrategy: 'jwt',
           session: false,
         }),
+        GasNaturalModule,
+        
       ],
       exports: [DevicesService],
       controllers: [DevicesController],

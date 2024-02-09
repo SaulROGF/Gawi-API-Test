@@ -76,6 +76,7 @@ export class OrganizationDataService {
   // }
 
   async getOrganizationData(user: User): Promise<ServerMessage> {
+    
     try {
       
       // Primero, obtén la organización asociada al usuario
@@ -91,7 +92,7 @@ export class OrganizationDataService {
       }
 
       // Estructura base para la inclusión
-      let includeStructure = [
+      const includeStructure = [
         {
           model: Organization,
           as: 'organization',
@@ -127,14 +128,15 @@ export class OrganizationDataService {
           }
         );
       }
-
-      let userWithOrganization: User = await this.userRepository.findOne<User>({
+      
+      const userWithOrganization: User = await this.userRepository.findOne<User>({
         where: {
           idUser: user.idUser,
         },
         include: includeStructure
       });
 
+      
       if (organization.type === 0) {
         console.log('Organizacion tipo 0 - root');
         return new ServerMessage(false, 'Datos enviados correctamente', {
@@ -147,7 +149,7 @@ export class OrganizationDataService {
           organization: userWithOrganization.organization,
         });
       }
-
+      
       return new ServerMessage(false, 'Datos enviados correctamente', {
         organization: userWithOrganization.organization,
       });
@@ -169,7 +171,6 @@ export class OrganizationDataService {
           idOrganization: idOrganization
         }
       });
-      console.log(regions)
       return new ServerMessage(false, 'Regiones obtenida exitosamente', regions);
     } catch (error){
       this.logger.error(error);
@@ -197,8 +198,6 @@ export class OrganizationDataService {
     idRegion: number,
     editOrganizationRegionDto: EditOrganizationRegionDto,
   ): Promise<ServerMessage> {
-    console.log(idRegion);
-    console.log(editOrganizationRegionDto);
     try {
       const region = await Regions.findByPk(idRegion);
 
@@ -690,13 +689,13 @@ export class OrganizationDataService {
     })
     
     if(validarSerial == null){
-      console.log(device)
+    
       const validarNombre = await Device.findOne({
         where:{
           name: device
         }
       })
-      console.log(validarNombre== null)
+
       //console.log(validarNombre.idDevice)
       if(validarNombre == null){
         return null;

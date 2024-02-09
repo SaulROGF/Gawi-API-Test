@@ -20,7 +20,6 @@ export class OrganizationDataController {
   @Get('get-organization-settings-data')
   @UseGuards(AuthGuard(),RoleOrganizationAdminGuard)
   async getAdminAccountData(@Req() req: any): Promise<ServerMessage> {
-    console.log(req.user);
     return await this.organizationDataService.getOrganizationData(req.user);
   }
 

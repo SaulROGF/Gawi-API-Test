@@ -111,7 +111,7 @@ export class NaturalGasSettings extends Model<NaturalGasSettings> {
     defaultValue: 0,
   })
   customDailyTime: number;
-  
+
   @Column({
     type: DataType.INTEGER({ length: 11 }),
     allowNull: true,
@@ -301,5 +301,89 @@ export class NaturalGasSettings extends Model<NaturalGasSettings> {
     }
 
     return parseInt(newStringStatus, 2);//16383 max
+  }
+
+
+      // Crea un nuevo numero de status apartir del actual segun la alarma que se quiere actualizar
+  //16383 max
+  calculateNewMultiStatus(status: number, noSetting: number, isForApply: boolean ) {
+    let stringStatus: string = status.toString(2);
+
+    while (stringStatus.length < 14) {
+      stringStatus = "0" + stringStatus;
+    }
+
+    const newStatus = [];
+
+    for (let index = 0; index < stringStatus.length; index++) {
+      const element = parseInt(stringStatus[index]);
+      newStatus.push(element);
+    }
+
+    if (noSetting < 14) {
+      newStatus[13 - noSetting] = isForApply ? 0 : 1
+    }
+
+    let newStringStatus = "";
+
+    for (let index = 0; index < newStatus.length; index++) {
+      const element = newStatus[index];
+      newStringStatus = newStringStatus + element.toString();
+    }
+
+    return parseInt(newStringStatus, 2);//16383 max
+  }
+
+  calcularBit(setting: string){
+    let bit = 0;
+    switch (setting) {
+      case 'customDailyTime':
+        bit = 0;
+        break;
+      case 'consumptionUnits':
+        bit = 1;
+        break;
+      case 'storageFrequency':
+        bit = 2;
+        break;
+      case 'dailyTime':
+        bit = 3;
+        break;
+      case 'periodicFrequency':
+        bit = 4;
+        break;
+      case 'apiUrl':
+        bit = 5;
+        break;
+      case 'apn':
+        bit = 6;
+        break;
+      case 'label':
+        bit = 7;
+        break;
+      case 'consumptionAlertSetpoint':
+        bit = 8;
+        break;
+      case 'consumptionAlertType':
+        bit = 9;
+        break;
+      case 'lowBatteryFlag':
+        bit = 10;
+        break;
+      case 'sensorFlag':
+        bit = 11;
+        break;
+      case 'darkFlag':
+        bit = 12;
+        break;
+      case 'lightFlag':
+        bit = 13;
+        break;
+      default:
+        bit = 16383;
+        break;
+    }
+    return bit;
+        
   }
 }

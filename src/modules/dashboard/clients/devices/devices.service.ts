@@ -372,7 +372,7 @@ export class DevicesService {
             
             let modifiedGasHistory: GasHistory = device.gasHistory[0];
             modifiedGasHistory.accumulatedConsumption = totalGasVolume;
-
+            
             return Object.assign({
                 idDevice: device.idDevice,
                 name: device.name,
@@ -581,7 +581,7 @@ export class DevicesService {
             let actualPeriod: NaturalGasHistory[] = await this.naturalGasHistoryRepository.findAll<
               NaturalGasHistory
             >({
-              attributes: ['idHistory', 'consumption', 'dateTime'],
+              attributes: ['idNaturalGasHistory', 'consumption', 'dateTime'],
               where: {
                 idDevice: device.idDevice,
                 [Op.or]: [
@@ -604,11 +604,11 @@ export class DevicesService {
               limit: 1,
               order: [['dateTime', 'DESC']],
             });
-
+            
             let lastPeriodHistory: NaturalGasHistory[] = await this.naturalGasHistoryRepository.findAll<
               NaturalGasHistory
             >({
-              attributes: ['idHistory', 'consumption', 'dateTime'],
+              attributes: ['idNaturalGasHistory', 'consumption', 'dateTime'],
               where: {
                 idDevice: device.idDevice,
                 dateTime: {
@@ -693,6 +693,7 @@ export class DevicesService {
       });
     } catch (error) {
       this.logger.error(error);
+      
       return new ServerMessage(true, 'A ocurrido un error', error);
     }
   }
@@ -918,7 +919,7 @@ export class DevicesService {
       let actualPeriod: NaturalGasHistory[] = await this.naturalGasHistoryRepository.findAll<
         NaturalGasHistory
       >({
-        attributes: ['idHistory', 'consumption', 'dateTime'],
+        attributes: ['idNaturalGasHistory', 'consumption', 'dateTime'],
         where: {
           idDevice: deviceData.idDevice,
           [Op.or]: [
@@ -945,7 +946,7 @@ export class DevicesService {
       let lastPeriodHistory: NaturalGasHistory[] = await this.naturalGasHistoryRepository.findAll<
         NaturalGasHistory
       >({
-        attributes: ['idHistory', 'consumption', 'dateTime'],
+        attributes: ['idNaturalGasHistory', 'consumption', 'dateTime'],
         where: {
           idDevice: deviceData.idDevice,
           dateTime: {
@@ -1055,7 +1056,7 @@ export class DevicesService {
         return new ServerMessage(true, 'Petición incompleta', {});
       }
 
-      let naturalGasSettings: NaturalGasSettings = await this.naturalGasSettingsRepository.findOne<
+      const naturalGasSettings: NaturalGasSettings = await this.naturalGasSettingsRepository.findOne<
         NaturalGasSettings
       >({
         where: {
@@ -1147,7 +1148,7 @@ export class DevicesService {
         return new ServerMessage(true, 'Petición incompleta', {});
       }
 
-      let newSettings: NaturalGasSettings = await this.naturalGasSettingsRepository.findOne<
+      const newSettings: NaturalGasSettings = await this.naturalGasSettingsRepository.findOne<
         NaturalGasSettings
       >({
         where: {
@@ -1434,7 +1435,8 @@ export class DevicesService {
         serviceOutageDay: deviceData.waterSettings.serviceOutageDay,
 
         actualPeriodMetry: actualPeriodMetry,
-        lastPeriodMetry: lastPeriodMetry * 1000,
+        lastPeriodMetry: lastPeriodMetry,
+
         actualLabels: actualLabels,
         actualPeriodValues: actualPeriodValues,
         limitValueLine: limitValueLine,
@@ -2505,7 +2507,8 @@ export class DevicesService {
       ) {
         return new ServerMessage(true, 'Petición incompleta', {});
       }
-
+      console.log(idDevice)
+      console.log(client)
       let waterSettings: WaterSettings = await this.waterSettingsRepository.findOne<
         WaterSettings
       >({
@@ -2524,6 +2527,7 @@ export class DevicesService {
           },
         ],
       });
+      console.log(waterSettings)
 
       if (!waterSettings) {
         return new ServerMessage(true, 'Dispositivo no disponible', {});

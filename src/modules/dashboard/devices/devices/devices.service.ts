@@ -19,10 +19,7 @@ import * as ftpService from 'basic-ftp';
 import * as fs from 'fs';
 import { Apn } from '../../../../models/apn.entity';
 import { PushNotificationsService } from '../../../../modules/global/push-notifications/push-notifications.service';
-import {
-  toLocalTime,
-  createDateAsUTC,
-} from './../../../../utils/utilities';
+import { toLocalTime, createDateAsUTC } from './../../../../utils/utilities';
 
 import {
   WaterSettingsDto,
@@ -37,29 +34,9 @@ import { DataloggerHistoryAdapter } from './classes/datalogger.adapter';
 import { GasHistoryAdapter } from './classes/gas.adapter';
 import { getPushAlerts } from './classes/datalogger.utils';
 import { Op } from 'sequelize';
-
-/**
- * @todo eliminar cuando ya estemos en producción: esto es solo una prueba para un medidor de forma individual
- */
-const choosenSerialnumbers = (serialNumber: string) => {
-  return [
-    serialNumber === '32303045',
-    serialNumber === '02220030',
-    serialNumber === '02220054',
-    serialNumber === '02220036',
-    serialNumber === '02220037',
-    serialNumber === '02220046',
-    serialNumber === '02220026',
-    serialNumber === '02220025',
-    serialNumber === '02220042',
-    serialNumber === '02220039',
-    serialNumber === '02220069',
-    serialNumber === '02220033',
-    serialNumber === '02220048',
-    serialNumber === '33313045',
-    serialNumber === '02220035',
-  ];
-};
+import { NaturalGasHistoryDTO } from './classes/naturalGasHistory.dto';
+import { NaturalGasSettings } from 'src/models/naturalGasSettings.entity';
+import { NaturalGassettingsDto } from './classes/naturalGasSettings.dto';
 
 @Injectable()
 export class DevicesService {
@@ -88,6 +65,8 @@ export class DevicesService {
     private readonly dataloggerSettingsRepository: typeof DataloggerSettings,
     @Inject('NaturalGasHistoryRepository')
     private readonly naturalGasHistoryRepository: typeof NaturalGasHistory,
+    @Inject('NaturalGasSettingsRepository')
+    private readonly naturalGasSettingsRepository: typeof NaturalGasSettings,
   ) {
     // establecer:
     // (1) el numero maximo de configuraciones para el medidor de agua
@@ -105,6 +84,7 @@ export class DevicesService {
     try {
       this.logger.debug(`-> [LIN] S.N.: ${body.B} psw: ${body.A}`);
       let loginData: LoginDto = new LoginDto(body);
+
       if (
         loginData.serialNumber == null ||
         loginData.serialNumber == undefined ||
@@ -113,24 +93,27 @@ export class DevicesService {
         (loginData.serialNumber.length != 8 && loginData.imei.length != 15)
       ) {
         this.logger.error('-> [692] datos proporcionado son invalidos (BODY)');
-        if (loginData.serialNumber == null || loginData.serialNumber == undefined) {
-          console.log("serialNumber es null o undefined");
+        if (
+          loginData.serialNumber == null ||
+          loginData.serialNumber == undefined
+        ) {
+          console.log('serialNumber es null o undefined');
         }
-        
+
         if (loginData.imei == null || loginData.imei == undefined) {
-          console.log("imei es null o undefined");
+          console.log('imei es null o undefined');
         }
-        
+
         if (loginData.serialNumber && loginData.serialNumber.length != 8) {
           console.log(loginData.serialNumber);
           console.log(loginData.serialNumber.length);
-          console.log("La longitud de serialNumber no es 8");
+          console.log('La longitud de serialNumber no es 8');
         }
-        
+
         if (loginData.imei && loginData.imei.length != 15) {
           console.log(loginData.imei);
           console.log(loginData.imei.length);
-          console.log("La longitud de imei no es 15");
+          console.log('La longitud de imei no es 15');
         }
         return new DeviceMessage(692, '');
       }
@@ -165,45 +148,200 @@ export class DevicesService {
    * @param body historial de transmision
    * @returns confirmación de recepción del historial
    */
-  async saveGasMeasures(body: any): Promise<DeviceMessage> {
+  async saveNaturalGasMeasures(body: any): Promise<DeviceMessage> {
     try {
-      //
-      // adaptador con la información procesada de la instancia del historial
-      //
-      const history: GasHistoryAdapter = new GasHistoryAdapter(body);
-      
-      //
-      // validaciones sobre la instancia
-      //
-      if (history.check()) {
-        this.logger.error('D->[692] datos proporcionados son invalidos (BODY)');
+      this.logger.debug('w->[HTY] ' + JSON.stringify(body));
+      const historyDTO: NaturalGasHistoryDTO = new NaturalGasHistoryDTO(body);
+
+      //TODO: BORRAR o comentar antes de produccion
+      // this.debugAlerts(historyDTO.alerts)
+
+      const constraints = [
+        historyDTO.token == null,
+        historyDTO.token == undefined,
+        historyDTO.consumption == null,
+        historyDTO.consumption == undefined,
+        historyDTO.temperature == null,
+        historyDTO.temperature == undefined,
+        historyDTO.signalQuality == null,
+        historyDTO.signalQuality == undefined,
+        historyDTO.batteryLevel == null,
+        historyDTO.batteryLevel == undefined,
+        historyDTO.alerts == null,
+        historyDTO.alerts == undefined,
+        historyDTO.reason == null,
+        historyDTO.reason == undefined,
+        historyDTO.dateTime == null,
+        historyDTO.dateTime == undefined,
+      ];
+
+      if (constraints.some(val => val)) {
+        this.logger.error('w->[692] datos proporcionado son invalidos (BODY)');
         return new DeviceMessage(692, '');
       }
 
-      if (history.checkDatetime()) {
-        this.logger.error('D->[695] fecha proporcionada por el dispositivo es inválida');
+      //
+      // validar la existencia del dispositivo meidante el token generado en el login
+      //
+      const payload: any = this.jwtService.decode(body.T);
+      const device: Device = await this.validateDeviceByJwt(payload);
+
+      //
+      // verificando la existencia del APN
+      //
+      const apn: Apn = await this.apnRepository.findOne<Apn>({
+        where: {
+          idApn: device.idApn,
+        },
+      });
+
+      if (!apn) {
+        this.logger.error('w->[692] datos proporcionado son invalidos (APN)');
+        return new DeviceMessage(692, '');
+      }
+
+      //
+      // Validando la fecha de lectura del medidor
+      //
+
+      const datetime: Date = new Date(historyDTO.dateTime);
+      if (
+        Object.prototype.toString.call(datetime) !== '[object Date]' ||
+        isNaN(datetime.getTime())
+      ) {
+        this.logger.error(
+          'w->[695] fecha proporcionada por el dispositivo es inválida',
+        );
         return new DeviceMessage(695, '');
       }
 
       //
-      // obtener el dispositivo relacionado a la instancia
+      // almacenando los datos recibidos
       //
-      const payload: any = this.jwtService.decode(history.token);
-      const device: Device = await this.validateDeviceByJwt(payload);
-      
-      //
-      // almacenar el historial en la DB
-      //
-      const instance: NaturalGasHistory = await this.naturalGasHistoryRepository.create<NaturalGasHistory>({
+      const history: NaturalGasHistory = await this.naturalGasHistoryRepository.create<
+        NaturalGasHistory
+      >({
         idDevice: device.idDevice,
-        consumption: history.consumption,
-        dateTime: createDateAsUTC(history.datetime),
+        consumption: historyDTO.consumption,
+        temperature: historyDTO.temperature,
+        signalQuality: historyDTO.signalQuality,
+        bateryLevel: historyDTO.batteryLevel,
+        reason: historyDTO.reason,
+        hour: historyDTO.deviceTime,
+        consumptionAlert: (historyDTO.alerts >>> 0) & 0x01, // Consumo    0x01
+        consumptionExcessAlert: (historyDTO.alerts >>> 1) & 0x01, // Exceso de consumo    0x02
+        lowBatteryAlert: (historyDTO.alerts >>> 2) & 0x01, // Bateria baja  0x04
+        sensorAlert: (historyDTO.alerts >>> 3) & 0x01, // Fallo del sensor     0x08
+        darkAlert: (historyDTO.alerts >>> 4) & 0x01, // Luz baja 0x10
+        lightAlert: (historyDTO.alerts >>> 5) & 0x01, // Luz alta
       });
+      history.dateTime = createDateAsUTC(datetime);
 
-      return new DeviceMessage(615, '');
+      await history.save();
+
+      // //
+      // // Obteniendo configuraciones disponibles
+      // //
+      let settings: NaturalGasSettings = await this.naturalGasSettingsRepository.findOne<
+        NaturalGasSettings
+      >({
+        where: {
+          idDevice: device.idDevice,
+        },
+      });
+      if (!settings) {
+        settings = await this.naturalGasSettingsRepository.create<
+          NaturalGasSettings
+        >({
+          idDevice: device.idDevice,
+
+          wereApplied: 0,
+          status: 16383,
+          firmwareVersion: 'beta',
+          serviceOutageDay: 15,
+          monthMaxConsumption: 0.0,
+          apiUrl: process.env.API_URL,
+          consumptionUnits: 'L',
+          storageFrequency: 1440,
+          storageTime: '00:00',
+          dailyTime: '00:00',
+          dailyTransmission: 1,
+          customDailyTime: 0,
+          periodicFrequency: 1440,
+          periodicTime: '00:00',
+          ipProtocol: 1,
+          auth: 1,
+          label: 'Medidor de gas natural beta 1.0',
+          consumptionAlertType: 0,
+          consumptionAlertSetPoint: 0,
+          consumptionExcessFlag: 1,
+          lowBatteryFlag: 1,
+          sensorFlag: 1,
+          darkSetPoint: 10,
+          darkFlag: 1,
+          lightSetPoint: 90,
+          lightFlag: 1,
+          isOn: 0,
+        });
+      }
+
+      if (settings.status == this.WD_MAX_CONFGS) {
+        //
+        // generando notificacion para el usuario
+        //
+        const pushResponse = await this.pushNotificationService.send(
+          device.idUser,
+          'Gawi',
+          'Tu medidor de gas ha generado una alerta',
+        );
+        if (pushResponse.error) {
+          this.logger.error(pushResponse);
+        }
+        // logger
+        this.logger.debug(
+          'w->[615] historial almacenado correctamente y sin cambios nuevos',
+        );
+        return new DeviceMessage(615, '');
+      } else {
+        // comprobando que los valores en digitos sean validos
+        if (
+          consumptionUnitsValidator[settings.consumptionUnits] == null ||
+          consumptionUnitsValidator[settings.consumptionUnits] == undefined ||
+          ipProtocolValidator[settings.ipProtocol] == null ||
+          ipProtocolValidator[settings.ipProtocol] == undefined ||
+          authValidator[settings.auth] == null ||
+          authValidator[settings.auth] == undefined
+        ) {
+          this.logger.error(
+            'w->[692] datos proporcionado son invalidos (SETTINGS)',
+          );
+          return new DeviceMessage(692, '');
+        }
+        //
+        // generando notificacion para el usuario
+        //
+        const pushResponse = await this.pushNotificationService.send(
+          device.idUser,
+          'Gawi',
+          'Uno de tus medidores ha generado una alerta',
+        );
+        if (pushResponse.error) {
+          this.logger.error(pushResponse.error);
+        }
+        // generando el stream con las configuraciones para transmitirlas al medidor
+        this.logger.debug(
+          'w->[612] historial almacenado correctamente y con cambios a aplicar',
+        );
+        return new DeviceMessage(
+          612,
+          this.getATcommandsNaturalGas(settings.status, settings, apn),
+        );
+      }
     } catch (error) {
       this.logger.error(error);
-      return error.response.statusCode == 401 ? new DeviceMessage(401, '') : new DeviceMessage(690, '');
+      return error.response.statusCode == 401
+        ? new DeviceMessage(401, '')
+        : new DeviceMessage(640, '');
     }
   }
 
@@ -230,7 +368,6 @@ export class DevicesService {
       let dataloggerHistory: DataloggerHistoryAdapter = new DataloggerHistoryAdapter(
         body,
       );
-
 
       if (dataloggerHistory.check()) {
         this.logger.error('D->[692] datos proporcionado son invalidos (BODY)');
@@ -321,83 +458,83 @@ export class DevicesService {
 
       //variable de control
       let haveInterval = false;
-      
-      if(settings.repeatNotificationTime != '00:00'){
+
+      if (settings.repeatNotificationTime != '00:00') {
         haveInterval = true;
       }
       //Si el usuario tiene la configuracion seteada en algun intervalo
       //se procede a eliminar las alertas que ya se hayan mandado
-      if(haveInterval){
+      if (haveInterval) {
         //Obtener intervalo
-        let timeFix : string[] = settings.repeatNotificationTime.split(":");
+        let timeFix: string[] = settings.repeatNotificationTime.split(':');
 
         let time = parseInt(timeFix[0]);
 
         let dateFrom = new Date();
-        dateFrom.setHours(dateFrom.getHours()-time);
+        dateFrom.setHours(dateFrom.getHours() - time);
         dateFrom.setMinutes(parseInt(timeFix[1]));
 
         //obtener los registros dentro del intervalo indicado
-        let dataloggerRegisters : DataloggerHistory[] = 
-          await this.dataloggerHistoryRepository.findAll<DataloggerHistory>({
-            where: {
-              idDevice: device.idDevice,
-              dateTime: {
-                [Op.gte]: toLocalTime(dateFrom).toISOString(),
-                /* [Op.between]: [
+        let dataloggerRegisters: DataloggerHistory[] = await this.dataloggerHistoryRepository.findAll<
+          DataloggerHistory
+        >({
+          where: {
+            idDevice: device.idDevice,
+            dateTime: {
+              [Op.gte]: toLocalTime(dateFrom).toISOString(),
+              /* [Op.between]: [
                   (dateFrom.toISOString() as unknown as number),
                   (todayDay.toISOString() as unknown as number)
                 ], */
-              },
             },
-            order: [['dateTime', 'DESC']],
-          });
+          },
+          order: [['dateTime', 'DESC']],
+        });
 
         console.log(dataloggerRegisters.length);
-        
+
         //funcion para hacer un reverse a los string
-        let reverseString =(str)=> {
-          if (str === "")
-            return "";
-          else
-            return reverseString(str.substr(1)) + str.charAt(0);
-        }
+        let reverseString = str => {
+          if (str === '') return '';
+          else return reverseString(str.substr(1)) + str.charAt(0);
+        };
         //Variable para guardar las alertas mandadas anteriormente durante el periodo indicado
         let alerts = [];
-        
+
         //Se crean las cadenas de string en formato binario de las alertas
         //de los registros actuales
         for (let index = 0; index < dataloggerRegisters.length; index++) {
           const originalRegister = dataloggerRegisters[index];
-          
+
           //logica usada en las graifcas para interpretar el numero de las alertas
-          let original: DataloggerHistoryAdapter = new DataloggerHistoryAdapter(originalRegister);
-          
+          let original: DataloggerHistoryAdapter = new DataloggerHistoryAdapter(
+            originalRegister,
+          );
+
           original.formatAlerts(settings);
           let fixedAlerts = original.alerts;
           let binAlerts: any = fixedAlerts.toString(2);
-  
+
           while (binAlerts.length < 16) {
-            binAlerts = "0" + binAlerts;
+            binAlerts = '0' + binAlerts;
           }
           //binAlerts = binAlerts.split("");
           //se acomoda el arreglo para que las alertas hagan match con el indice
           //y lo guardamos para luego revisar si alguna alarma no se encuentra en ellas
           alerts.push(reverseString(binAlerts));
           console.log(reverseString(binAlerts));
-          
         }
-        // Se quita el ultimo elemento porque que es el registro 
+        // Se quita el ultimo elemento porque que es el registro
         // que acabamos de crear
         alerts.pop();
 
         //se empieza a crear el string del binario de las alertas
-        //para luego comparar si alguna de las alarmas que viene 
+        //para luego comparar si alguna de las alarmas que viene
         //se mando previamente
         let binOriginalAlerts: any = dataloggerHistory.alerts.toString(2);
-  
+
         while (binOriginalAlerts.length < 16) {
-          binOriginalAlerts = "0" + binOriginalAlerts;
+          binOriginalAlerts = '0' + binOriginalAlerts;
         }
         let fixedOrigianlAlerts = reverseString(binOriginalAlerts);
 
@@ -408,30 +545,30 @@ export class DevicesService {
         //Se obtiene la informacion de las alertas que se deben de mandar en esta
         //transmisión
         for (let idx = 0; idx < dataloggerHistory.ALERTS_LEN; idx++) {
-          if (((dataloggerHistory.alerts >>> idx) & ALERT_MASK)) {
+          if ((dataloggerHistory.alerts >>> idx) & ALERT_MASK) {
             const alert = pushAlerts[idx];
             const banner = `El dispositivo '${device.name}' indica un ${alert}`;
-            newAlerts.push({idx,banner});
+            newAlerts.push({ idx, banner });
           }
         }
         //console.log(newAlerts);
         // Logica para checar si la alert ya se habia mandado dentro del
         // intervalo establecido por el usuario por medio de los registros en el
-        
+
         for (let index = 0; index < alerts.length; index++) {
           const actualBinaryString = alerts[index];
 
           for (let index = 0; index < actualBinaryString.length; index++) {
             const binaryChar = actualBinaryString[index];
 
-            if(binaryChar == '1'){
-              //Si la alerta esta levantada se busca si ya se encuentra 
+            if (binaryChar == '1') {
+              //Si la alerta esta levantada se busca si ya se encuentra
               //en las nuevas alertas que queremos mandar y si esta la quitamos
-              let indexAlert = newAlerts.findIndex((newAlert)=>{
+              let indexAlert = newAlerts.findIndex(newAlert => {
                 return index == newAlert.idx;
               });
               //si se encuentra se elimina del arreglo con la información de las nuevas alertas
-              if(indexAlert > -1){
+              if (indexAlert > -1) {
                 newAlerts.splice(indexAlert, 1);
               }
             }
@@ -444,16 +581,15 @@ export class DevicesService {
           const alertToSend = newAlerts[index];
 
           const pushResponse = await this.pushNotificationService.send(
-              device.idUser,
-              'Gawi',
-              alertToSend.banner,
-            );
-            if (pushResponse.error) {
-              this.logger.error(pushResponse);
-            }
+            device.idUser,
+            'Gawi',
+            alertToSend.banner,
+          );
+          if (pushResponse.error) {
+            this.logger.error(pushResponse);
+          }
         }
-            
-      }else{
+      } else {
         for (let idx = 0; idx < dataloggerHistory.ALERTS_LEN; idx++) {
           if (((dataloggerHistory.alerts >>> idx) & ALERT_MASK) != 0) {
             const alert = pushAlerts[idx];
@@ -469,7 +605,7 @@ export class DevicesService {
           }
         }
       }
-      
+
       this.logger.debug(
         'D->[615] historial almacenado correctamente y sin cambios nuevos',
       );
@@ -492,7 +628,7 @@ export class DevicesService {
       this.logger.debug('w->[HTY] ' + JSON.stringify(body));
       let historyDTO: WaterHistoryDto = new WaterHistoryDto(body);
 
-      //TODO: BORRAR o comentar antes de produccion 
+      //TODO: BORRAR o comentar antes de produccion
       // this.debugAlerts(historyDTO.alerts)
 
       const constraints = [
@@ -517,6 +653,7 @@ export class DevicesService {
         historyDTO.deviceDatetime == null,
         historyDTO.deviceDatetime == undefined,
       ];
+
       if (constraints.some(val => val)) {
         this.logger.error('w->[692] datos proporcionado son invalidos (BODY)');
         return new DeviceMessage(692, '');
@@ -545,6 +682,7 @@ export class DevicesService {
       //
       // Validando la fecha de lectura del medidor
       //
+
       let datetime: Date = new Date(historyDTO.deviceDatetime);
       if (
         Object.prototype.toString.call(datetime) !== '[object Date]' ||
@@ -555,7 +693,6 @@ export class DevicesService {
         );
         return new DeviceMessage(695, '');
       }
-      
 
       //
       // alamcenando los datos recibidos
@@ -569,18 +706,17 @@ export class DevicesService {
         temperature: historyDTO.temperature,
         signalQuality: historyDTO.signalQuality,
         bateryLevel: historyDTO.batteryLevel,
-        dripAlert:         (historyDTO.alerts >>> 0) & 0x01, // Goteo    0x01
-        emptyAlert:        (historyDTO.alerts >>> 1) & 0x01, // Vacío    0x02
+        dripAlert: (historyDTO.alerts >>> 0) & 0x01, // Goteo    0x01
+        emptyAlert: (historyDTO.alerts >>> 1) & 0x01, // Vacío    0x02
         reversedFlowAlert: (historyDTO.alerts >>> 2) & 0x01, // Inverso  0x04
-        burstAlert:         (historyDTO.alerts >>> 3) & 0x01, // Fuga     0x08
-        bubbleAlert:       (historyDTO.alerts >>> 4) & 0x01, // Burbujas 0x10
+        burstAlert: (historyDTO.alerts >>> 3) & 0x01, // Fuga     0x08
+        bubbleAlert: (historyDTO.alerts >>> 4) & 0x01, // Burbujas 0x10
         manipulationAlert: (historyDTO.alerts >>> 5) & 0x01, // Manipulación aún no implementada
         reason: historyDTO.reason,
         reversedConsumption: historyDTO.reversedConsumption,
       });
       history.dateTime = createDateAsUTC(datetime);
-      
-      
+
       await history.save();
 
       //
@@ -774,6 +910,100 @@ export class DevicesService {
     }
   }
 
+   /**
+   * marcar settings del dispositivo de gas natural como aplicados
+   * @param body configuraciones aplicadas en el medidor
+   * @returns
+   */
+   async markNaturalGasSettingsAsApplied(body: any): Promise<DeviceMessage> {
+    try {
+      this.logger.debug('w->[MRK] ' + JSON.stringify(body));
+      const constraints = [
+        body.T == null,
+        body.T == undefined,
+        body.S == null,
+        body.S == undefined,
+      ];
+
+      if (constraints.some(val => val)) {
+        this.logger.error('w->[692] datos proporcionado son invalidos (BODY)');
+        return new DeviceMessage(692, '');
+      }
+      /**
+       * validar la existencia del dispositivo meidante el token
+       */
+      const payload: any = this.jwtService.decode(body.T);
+      const device: Device = await this.validateDeviceByJwt(payload);
+
+      /**
+       * verificando la existencia del APN
+       */
+      const apn: Apn = await this.apnRepository.findOne<Apn>({
+        where: {
+          idApn: device.idApn,
+        },
+      });
+
+      if (!apn) {
+        this.logger.error('w->[692] datos proporcionado son invalidos (APN)');
+        return new DeviceMessage(692, '');
+      }
+
+      const settings: NaturalGasSettings = await this.naturalGasSettingsRepository.findOne<
+      NaturalGasSettings
+      >({
+        where: {
+          idDevice: device.idDevice,
+        },
+      });
+
+      if (!settings) {
+        this.logger.error('no existen los settings para un dispositivo valido');
+        return new DeviceMessage(690, '');
+      }
+
+      if (body.S == this.WD_MAX_CONFGS) {
+        // aplicar las actualizaciones recibidas del medidor en la DB
+        // y poner a true la bandera de configuraciones aplicadas
+        settings.status = settings.status | body.S;
+        settings.wereApplied = true;
+        await settings.save();
+        this.logger.debug(
+          'w->[614] configuraciones aplicadas: ' + settings.status.toString(2),
+        );
+        return new DeviceMessage(614, '');
+      } else {
+        // comprobando que los valores en digitos sean validos
+        if (
+          consumptionUnitsValidator[settings.consumptionUnits] == null ||
+          consumptionUnitsValidator[settings.consumptionUnits] == undefined ||
+          ipProtocolValidator[settings.ipProtocol] == null ||
+          ipProtocolValidator[settings.ipProtocol] == undefined ||
+          authValidator[settings.auth] == null ||
+          authValidator[settings.auth] == undefined ||
+          consumptionAlertValidator[settings.consumptionAlertType] == null ||
+          consumptionAlertValidator[settings.consumptionAlertType] == undefined
+        ) {
+          this.logger.error(
+            'w->[692] datos proporcionado son invalidos (SETTINGS)',
+          );
+          return new DeviceMessage(692, '');
+        }
+        // generando el stream con las configuraciones para transmitirlas al medidor
+        this.logger.debug('w->[613] cambios a aplicar');
+        return new DeviceMessage(
+          613,
+          this.getATcommandsNaturalGas(body.S, settings, apn),
+        );
+      }
+    } catch (error) {
+      this.logger.error(error);
+      return error.response.statusCode == 401
+        ? new DeviceMessage(401, '')
+        : new DeviceMessage(640, '');
+    }
+  }
+
   /**
    * marcar settings del dispositivo de gas como aplicados
    * @param serialNumber numero de serie del dispositivo
@@ -807,8 +1037,6 @@ export class DevicesService {
       return new DeviceMessage(90, '');
     }
   }
-
-
 
   //TODO: Revisar lo del consumo por periodo del dispositivo de gas
   /**
@@ -882,7 +1110,9 @@ export class DevicesService {
         signalQuality == undefined,
       ];
       if (constraints.some(val => val)) {
-        this.logger.error('# g->[ 92] datos proporcionado son invalidos (BODY)');
+        this.logger.error(
+          '# g->[ 92] datos proporcionado son invalidos (BODY)',
+        );
         return new DeviceMessage(92, '');
       }
 
@@ -946,7 +1176,7 @@ export class DevicesService {
       });
       history.dateTime = createDateAsUTC(datetime);
       await history.save();
-      
+
       let settings: GasSettings = await this.gasSettingsRepository.findOne<
         GasSettings
       >({
@@ -958,12 +1188,12 @@ export class DevicesService {
       if (!settings) {
         settings = await this.gasSettingsRepository.create<GasSettings>({
           idDevice: gasDevice.idDevice,
-          destUrl:  process.env.API_URL,
+          destUrl: process.env.API_URL,
           closingHour: '23:59',
           consumptionUnits: '0060',
-          interval: 25,                // 2 chars, ej: 25
-          minFillingPercentage: 9,     // 2 chars, ej: 09
-          consumptionPeriod: '010',    // 3 chars, ej: 010
+          interval: 25, // 2 chars, ej: 25
+          minFillingPercentage: 9, // 2 chars, ej: 09
+          consumptionPeriod: '010', // 3 chars, ej: 010
           minsBetweenMeasurements: 10, // 4 chars, ej: 0010
           travelMode: 0,
           wereApplied: false,
@@ -972,7 +1202,7 @@ export class DevicesService {
       /**
        * @todo eliminar cuando ya estemos en producción: esto es solo una prueba para un medidor de forma individual
        */
-      const gasConfigs: string = this.getGasSettingsString(settings)
+      const gasConfigs: string = this.getGasSettingsString(settings);
 
       if (settings.offsetTime !== '00:01') {
         settings.offsetTime = '00:01';
@@ -1191,19 +1421,27 @@ export class DevicesService {
    */
   private getGasSettingsString(settings: GasSettings): string {
     return (
-      settings.closingHour + ',' +                                        // 5 unidades
-      this.fixLenWithZero(Number(settings.consumptionUnits), 4) + ',' +   // 4 unidades
-      this.fixLenWithZero(settings.minsBetweenMeasurements, 4) + ',' +    // 4 unidades
-      this.fixLenWithZero(Number(settings.consumptionPeriod), 3) + ',' +  // 3 unidades
-      this.fixLenWithZero(settings.minFillingPercentage, 2) + ',' +       // 3 unidades  
-      this.fixLenWithZero(settings.interval, 2) + ',' +                   // 2 unidades
-      (settings.travelMode ? '1' : '0') + ',' +                           // 1 unidad
-      this.fixLenWithZero(settings.offset, 3) + ',' +                     // 3 unidades
-      settings.offsetTime + ',' +                                         // 5 unidades
+      settings.closingHour +
+      ',' + // 5 unidades
+      this.fixLenWithZero(Number(settings.consumptionUnits), 4) +
+      ',' + // 4 unidades
+      this.fixLenWithZero(settings.minsBetweenMeasurements, 4) +
+      ',' + // 4 unidades
+      this.fixLenWithZero(Number(settings.consumptionPeriod), 3) +
+      ',' + // 3 unidades
+      this.fixLenWithZero(settings.minFillingPercentage, 2) +
+      ',' + // 3 unidades
+      this.fixLenWithZero(settings.interval, 2) +
+      ',' + // 2 unidades
+      (settings.travelMode ? '1' : '0') +
+      ',' + // 1 unidad
+      this.fixLenWithZero(settings.offset, 3) +
+      ',' + // 3 unidades
+      settings.offsetTime +
+      ',' + // 5 unidades
       settings.destUrl
     );
   }
-
 
   /**
    * añadir ceros a la izquierda en un valor dada
@@ -1231,11 +1469,43 @@ export class DevicesService {
    * @returns cadena con los comandos AT lista para ser transmitida
    */
   private getATcommands(status: number, settings: WaterSettings, apn: Apn) {
-    let settingsCmd: WaterSettingsDto = new WaterSettingsDto(settings, apn);
-    let commands: string[] = settingsCmd.getCommands();
+    const settingsCmd: WaterSettingsDto = new WaterSettingsDto(settings, apn);
+    const commands: string[] = settingsCmd.getCommands();
     let stream: string = '';
 
-    for (let [pos, cmd] of commands.entries()) {
+    for (const [pos, cmd] of commands.entries()) {
+      if (
+        settingsCmd.totalLength <
+        stream.length + settingsCmd.checksumLength + settingsCmd.headerLength
+      )
+        break;
+
+      if (!this.checkIsApplied(status, pos)) stream += cmd;
+    }
+
+    return stream + '$' + this.computeCRC32(stream);
+  }
+
+  /**
+   * Formatear los settings del aque a una cadena de caracteres con los comandos AT
+   * @param status estado de la configuraciones provenientes del medidor o del usuario
+   * @param settings configuraciones a aplicar al medidior de agua
+   * @param apn APN vinculado al dispositivo
+   * @returns cadena con los comandos AT lista para ser transmitida
+   */
+  private getATcommandsNaturalGas(
+    status: number,
+    settings: NaturalGasSettings,
+    apn: Apn,
+  ) {
+    const settingsCmd: NaturalGassettingsDto = new NaturalGassettingsDto(
+      settings,
+      apn,
+    );
+    const commands: string[] = settingsCmd.getCommands();
+    let stream = '';
+
+    for (const [pos, cmd] of commands.entries()) {
       if (
         settingsCmd.totalLength <
         stream.length + settingsCmd.checksumLength + settingsCmd.headerLength
@@ -1324,10 +1594,10 @@ export class DevicesService {
     return [filename, filePath];
   }
 
-  //ESTA FUNCION ES PARA DEBUGEAR LAS ALERTAS 
+  //ESTA FUNCION ES PARA DEBUGEAR LAS ALERTAS
   private debugAlerts(alerts: number) {
     let binaryString: string = alerts.toString(2).padStart(8, '0');
-  
+
     console.log(`Alert value: ${alerts}, Binary: ${binaryString}`);
     console.log(`Drip Alert: ${(alerts >>> 0) & 0x01}`);
     console.log(`Empty Alert: ${(alerts >>> 1) & 0x01}`);

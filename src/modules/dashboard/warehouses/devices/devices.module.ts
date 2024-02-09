@@ -8,6 +8,7 @@ import { waterSettingsProviders } from '../../../../models/repositoriesModels/wa
 import { gasSettingsProviders } from '../../../../models/repositoriesModels/gasSettings.providers';
 import { apnProviders } from '../../../../models/apn.entity';
 import { dataloggerSettingsProviders } from '../../../../models/repositoriesModels/dataloggerSettings.providers';
+import { naturalGasSettingsProviders } from '../../../../models/repositoriesModels/naturalGasSettings.providers';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { dataloggerSettingsProviders } from '../../../../models/repositoriesMode
       ...gasSettingsProviders,
       ...apnProviders,
       ...dataloggerSettingsProviders,
+      ...naturalGasSettingsProviders,
   ]
 })
 export class DevicesModule {}

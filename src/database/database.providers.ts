@@ -20,7 +20,7 @@ import { DataloggerSettings } from '../models/dataloggerSettings.entity';
 import { DataloggerHistory } from '../models/dataloggerHistory.entity';
 import { NaturalGasHistory } from '../models/naturalGasHistory.entity';
 import { NaturalGasSettings } from '../models/naturalGasSettings.entity';
-import { FieldDevice } from 'src/models/fieldDevice.entity';
+
 import { Regions } from 'src/models/regions.entity';
 import { Zones } from 'src/models/zones.entity';
 import { Stations } from 'src/models/stations.entity';
@@ -66,7 +66,6 @@ export const databaseProviders = [
         DataloggerSettings,
         NaturalGasSettings,
         NaturalGasHistory,
-        FieldDevice, 
         Regions, 
         Zones, 
         Stations,

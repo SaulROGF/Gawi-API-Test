@@ -11,7 +11,7 @@ import {
 import { Zones } from "./zones.entity";
 import { Organization } from "./organization.entity";
 import { User } from "./user.entity"; // Asumiendo que tienes un entity para usuarios llamado "User"
-import { DeviceStation } from "./deviceStation.entity";
+//import { DeviceStation } from "./deviceStation.entity";
 
 @Table({
     tableName: 'stations', 
