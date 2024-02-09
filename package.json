@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
-    "cpdir": "cp -r ./templates ./dist/templates && cp -r ./storage ./dist/storage && cp -r ./log ./dist/log  && cp ./.htaccess ./dist && cp ./.env ./dist",
+    "cpdir": "cp -r ./templates ./dist/templates && cp -r ./storage ./dist/storage  && cp ./.htaccess ./dist && cp ./.env ./dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "build": "nest build && npm run cpdir",
     "newbuild": "nest build",
